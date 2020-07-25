@@ -408,12 +408,17 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 	else //General Triangle
 	{
 		//v0 = top, v1 = mid, v2 = bottom
-		const Vec2* midPoint;
-		*midPoint = { 0.0f, p1->y };
+		const float dy = p1->y - p0->y;
 
+		const float x_run = (p2->x - p1->x) / (p2->y - p1->y);
+
+		const Vec2 mid = { (dy * x_run), p1->y };
+		const Vec2* midPoint = &mid;
 
 		if (midPoint->x < p1->x) { std::swap(p1, midPoint); };
+
 		DrawFlatBottomTriangle(*p0, *p1, *midPoint, c);
+
 		DrawFlatTopTriangle(*p1, *midPoint, *p2, c);
 	}
 
