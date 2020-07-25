@@ -92,24 +92,46 @@ void Game::ComposeFrame()
 		Colors::MakeRGB(100u,200u, 255u)
 	};
 
+	//Make Cube
 	auto triangles = cube.GetTriangles();
+	//Set Rot
 	const Mat3 rot =
 		Mat3::RotationX( theta_x ) *
 		Mat3::RotationY( theta_y ) *
 		Mat3::RotationZ( theta_z );
+	//Apply Rot
 	for( auto& v : triangles.vertices )
 	{
 		v *= rot;
 		v += { 0.0f,0.0f,offset_z };
-		pst.Transform( v );
 	}
-	int c = 0;
-	for( auto i = triangles.indices.cbegin(),
-		end = triangles.indices.cend();
-		i != end; std::advance( i,3 ) )
+
+	//Apply back face culling flags
+	for (int i = 0; i < (triangles.indices.size() / 3); ++i)
 	{
-		gfx.DrawTriangle(triangles.vertices[*i], triangles.vertices[*std::next(i)], triangles.vertices[*std::next( i, 2 )], colors[c]);
-		c++;
+		const Vec3& v0 = triangles.vertices[triangles.indices[i * 3]];
+		const Vec3& v1 = triangles.vertices[triangles.indices[i * 3 + 1]];
+		const Vec3& v2 = triangles.vertices[triangles.indices[i * 3 + 2]];
+		triangles.cullFlags[i] = (v1 - v0).X(v2 - v0) * v0 >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
+	}
+
+
+	//Apply Screen space transform
+	for (auto& v : triangles.vertices)
+	{
+		pst.Transform(v);
+	}
+
+	//Draw verts
+	for (int i = 0; i < triangles.indices.size() / 3; ++i)
+	{
+		if (!triangles.cullFlags[i])
+		{
+			gfx.DrawTriangle(
+				triangles.vertices[triangles.indices[i * 3]],
+				triangles.vertices[triangles.indices[i * 3 + 1]],
+				triangles.vertices[triangles.indices[i * 3 + 2]], colors[i]);
+		}
 	}
 
 
