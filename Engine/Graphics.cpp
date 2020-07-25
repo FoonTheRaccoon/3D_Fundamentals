@@ -408,18 +408,27 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 	else //General Triangle
 	{
 		//v0 = top, v1 = mid, v2 = bottom
-		const float dy = p1->y - p0->y;
+		//const float dy = p1->y - p0->y;
+		//
+		//const float x_run = (p2->x - p1->x) / (p2->y - p1->y);
+		//const Vec2 mid = { (dy * x_run), p1->y };
 
-		const float x_run = (p2->x - p1->x) / (p2->y - p1->y);
+		const float alphaSplit = (p1->y - p0->y) / (p2->y - p0->y);
 
-		const Vec2 mid = { (dy * x_run), p1->y };
-		const Vec2* midPoint = &mid;
+		const Vec2 mid = *p0 + (*p2 - *p0) * alphaSplit;
 
-		if (midPoint->x < p1->x) { std::swap(p1, midPoint); };
+		if (mid.x < p1->x) // Major Left
+		{
+			DrawFlatBottomTriangle(*p0, mid, *p1, c);
+			DrawFlatTopTriangle(mid, *p1, *p2, c);
+		}
+		else //Major Right
+		{
+			DrawFlatBottomTriangle(*p0, *p1, mid, c);
+			DrawFlatTopTriangle(*p1, mid, *p2, c);
+		}
 
-		DrawFlatBottomTriangle(*p0, *p1, *midPoint, c);
-
-		DrawFlatTopTriangle(*p1, *midPoint, *p2, c);
+		
 	}
 
 }
@@ -428,12 +437,40 @@ void Graphics::DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v
 {
 	//v0 top left, v1 top right, v2 bottom point
 
+	const float L_x_run = (v2.x - v0.x) / (v2.y - v0.y); //Change in x per y (inverse slope) of left line.
+	const float R_x_run = (v2.x - v1.x) / (v2.y - v1.y); //Same but for right.
 
+	const float yStart = (int)v0.y;
+	const float yEnd = (int)v2.y;
+
+	for (int iy = yStart; iy < yEnd; ++iy)
+	{
+		const int xStart = int(v0.x + L_x_run * (iy - yStart));
+		const int xEnd = int(v1.x + R_x_run * (iy - yStart));
+		for (int ix = yStart; ix < xEnd; ++ix)
+		{
+			PutPixel(ix, iy, c);
+		}
+	}
 }
 
 void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
 {
 	//v0 top point, v1 bottom left, v2 bottom right
 
+	const float L_x_run = (v0.x - v1.x) / (v0.y - v1.y); //Change in x per y (inverse slope) of left line.
+	const float R_x_run = (v0.x - v2.x) / (v0.y - v2.y); //Same but for right.
 
+	const float yStart = (int)v0.y;
+	const float yEnd = (int)v2.y;
+
+	for (int iy = yStart; iy > yEnd; --iy)
+	{
+		const int xStart = int(v1.x + L_x_run * (iy - yStart));
+		const int xEnd = int(v2.x + R_x_run * (iy - yStart));
+		for (int ix = yStart; ix < xEnd; ++ix)
+		{
+			PutPixel(ix, iy, c);
+		}
+	}
 }
