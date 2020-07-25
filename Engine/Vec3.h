@@ -63,6 +63,15 @@ public:
 		norm.Normalize();
 		return norm;
 	}
+	_Vec3	X(const _Vec3& rhs) //Cross product
+	{
+		return _Vec3(
+			y * rhs.z - z * rhs.y,
+			z * rhs.x - x * rhs.z,
+			x * rhs.y - y * rhs.x
+		);
+
+	}
 	_Vec3	operator-() const
 	{
 		return _Vec3( -x,-y,-z );
