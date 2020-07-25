@@ -403,19 +403,16 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 	else if (p2->y == p1->y) //Flat bottom Check
 	{
 		if (p2->x < p1->x) { std::swap(p1, p2); };
-		DrawFlatTopTriangle(*p0, *p1, *p2, c);
+		DrawFlatBottomTriangle(*p0, *p1, *p2, c);
 	}
 	else //General Triangle
 	{
 		//v0 = top, v1 = mid, v2 = bottom
-		//const float dy = p1->y - p0->y;
-		//
-		//const float x_run = (p2->x - p1->x) / (p2->y - p1->y);
-		//const Vec2 mid = { (dy * x_run), p1->y };
 
-		const float alphaSplit = (p1->y - p0->y) / (p2->y - p0->y);
-
-		const Vec2 mid = *p0 + (*p2 - *p0) * alphaSplit;
+		//Calculate mid point ratio within top and bottom points
+		const float y_Ratio = (p1->y - p0->y) / (p2->y - p0->y);
+		
+		const Vec2 mid = {p0->x + (p2->x - p0->x) * y_Ratio, p1->y};
 
 		if (mid.x < p1->x) // Major Left
 		{
@@ -440,14 +437,17 @@ void Graphics::DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v
 	const float L_x_run = (v2.x - v0.x) / (v2.y - v0.y); //Change in x per y (inverse slope) of left line.
 	const float R_x_run = (v2.x - v1.x) / (v2.y - v1.y); //Same but for right.
 
-	const float yStart = (int)v0.y;
-	const float yEnd = (int)v2.y;
+	const int yStart = (int)ceilf(v0.y - 0.5f);
+	const int yEnd = (int)ceilf(v2.y - 0.5f);
 
 	for (int iy = yStart; iy < yEnd; ++iy)
 	{
-		const int xStart = int(v0.x + L_x_run * (iy - yStart));
-		const int xEnd = int(v1.x + R_x_run * (iy - yStart));
-		for (int ix = yStart; ix < xEnd; ++ix)
+		const float L_x = L_x_run * (float(iy) + 0.5f - v0.y) + v0.x;
+		const float R_x = R_x_run * (float(iy) + 0.5f - v1.y) + v1.x;
+
+		const int xStart = (int)ceilf(L_x - 0.5f);
+		const int xEnd = (int)ceilf(R_x - 0.5f);
+		for (int ix = xStart; ix < xEnd; ++ix)
 		{
 			PutPixel(ix, iy, c);
 		}
@@ -458,17 +458,20 @@ void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2
 {
 	//v0 top point, v1 bottom left, v2 bottom right
 
-	const float L_x_run = (v0.x - v1.x) / (v0.y - v1.y); //Change in x per y (inverse slope) of left line.
-	const float R_x_run = (v0.x - v2.x) / (v0.y - v2.y); //Same but for right.
+	const float L_x_run = (v1.x - v0.x) / (v1.y - v0.y); //Change in x per y (inverse slope) of left line.
+	const float R_x_run = (v2.x - v0.x) / (v2.y - v0.y); //Same but for right.
 
-	const float yStart = (int)v0.y;
-	const float yEnd = (int)v2.y;
+	const int yStart = (int)ceilf(v0.y - 0.5f);
+	const int yEnd = (int)ceilf(v2.y - 0.5f);
 
-	for (int iy = yStart; iy > yEnd; --iy)
+	for (int iy = yStart; iy < yEnd; ++iy)
 	{
-		const int xStart = int(v1.x + L_x_run * (iy - yStart));
-		const int xEnd = int(v2.x + R_x_run * (iy - yStart));
-		for (int ix = yStart; ix < xEnd; ++ix)
+		const float L_x = L_x_run * (float(iy) + 0.5f - v1.y) + v1.x;
+		const float R_x = R_x_run * (float(iy) + 0.5f - v2.y) + v2.x;
+
+		const int xStart = (int)ceilf(L_x - 0.5f);
+		const int xEnd = (int)ceilf(R_x - 0.5f);
+		for (int ix = xStart; ix < xEnd; ++ix)
 		{
 			PutPixel(ix, iy, c);
 		}

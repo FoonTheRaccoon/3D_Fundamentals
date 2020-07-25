@@ -40,65 +40,77 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	//const float dt = 1.0f / 60.0f;
-	//if( wnd.kbd.KeyIsPressed( 'Q' ) )
-	//{
-	//	theta_x = wrap_angle( theta_x + dTheta * dt );
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'W' ) )
-	//{
-	//	theta_y = wrap_angle( theta_y + dTheta * dt );
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'E' ) )
-	//{
-	//	theta_z = wrap_angle( theta_z + dTheta * dt );
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'A' ) )
-	//{
-	//	theta_x = wrap_angle( theta_x - dTheta * dt );
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'S' ) )
-	//{
-	//	theta_y = wrap_angle( theta_y - dTheta * dt );
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'D' ) )
-	//{
-	//	theta_z = wrap_angle( theta_z - dTheta * dt );
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'R' ) )
-	//{
-	//	offset_z += 2.0f * dt;
-	//}
-	//if( wnd.kbd.KeyIsPressed( 'F' ) )
-	//{
-	//	offset_z -= 2.0f * dt;
-	//}
+	const float dt = 1.0f / 60.0f;
+	if( wnd.kbd.KeyIsPressed( 'Q' ) )
+	{
+		theta_x = wrap_angle( theta_x + dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'W' ) )
+	{
+		theta_y = wrap_angle( theta_y + dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'E' ) )
+	{
+		theta_z = wrap_angle( theta_z + dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'A' ) )
+	{
+		theta_x = wrap_angle( theta_x - dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'S' ) )
+	{
+		theta_y = wrap_angle( theta_y - dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'D' ) )
+	{
+		theta_z = wrap_angle( theta_z - dTheta * dt );
+	}
+	if( wnd.kbd.KeyIsPressed( 'R' ) )
+	{
+		offset_z += 2.0f * dt;
+	}
+	if( wnd.kbd.KeyIsPressed( 'F' ) )
+	{
+		offset_z -= 2.0f * dt;
+	}
 }
 
 void Game::ComposeFrame()
 {
-	//auto lines = cube.GetLines();
-	//const Mat3 rot =
-	//	Mat3::RotationX( theta_x ) *
-	//	Mat3::RotationY( theta_y ) *
-	//	Mat3::RotationZ( theta_z );
-	//for( auto& v : lines.vertices )
-	//{
-	//	v *= rot;
-	//	v += { 0.0f,0.0f,offset_z };
-	//	pst.Transform( v );
-	//}
-	//for( auto i = lines.indices.cbegin(),
-	//	end = lines.indices.cend();
-	//	i != end; std::advance( i,2 ) )
-	//{
-	//	gfx.DrawLine( lines.vertices[*i],lines.vertices[*std::next( i )],Colors::White );
-	//}
+	const Color colors[12] = {
+		Colors::Blue,
+		Colors::Cyan,
+		Colors::Gray,
+		Colors::Green,
+		Colors::LightGray,
+		Colors::Magenta,
+		Colors::Red,
+		Colors::White,
+		Colors::Yellow,
+		Colors::MakeRGB(100u, 0u,100u),
+		Colors::MakeRGB(200u,200u, 0u),
+		Colors::MakeRGB(100u,200u, 255u)
+	};
 
-	const float ScaleFactor = 0.2f;
-	const Vec2 p0 = { 100.0f, 100.0f };
-	const Vec2 p1 = { -60.0f, 80.0f };
-	const Vec2 p2 = { 10.0f, -60.0f };
+	auto triangles = cube.GetTriangles();
+	const Mat3 rot =
+		Mat3::RotationX( theta_x ) *
+		Mat3::RotationY( theta_y ) *
+		Mat3::RotationZ( theta_z );
+	for( auto& v : triangles.vertices )
+	{
+		v *= rot;
+		v += { 0.0f,0.0f,offset_z };
+		pst.Transform( v );
+	}
+	int c = 0;
+	for( auto i = triangles.indices.cbegin(),
+		end = triangles.indices.cend();
+		i != end; std::advance( i,3 ) )
+	{
+		gfx.DrawTriangle(triangles.vertices[*i], triangles.vertices[*std::next(i)], triangles.vertices[*std::next( i, 2 )], colors[c]);
+		c++;
+	}
 
-	gfx.DrawTriangle(p0 / ScaleFactor,p1 / ScaleFactor,p2 / ScaleFactor,Colors::Blue);
+
 }
