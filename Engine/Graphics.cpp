@@ -381,3 +381,54 @@ void Graphics::DrawLine( float x1,float y1,float x2,float y2,Color c )
 		}
 	}
 }
+
+void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
+{
+	//Ptr creation for swaps.
+	const Vec2* p0 = &v0;
+	const Vec2* p1 = &v1;
+	const Vec2* p2 = &v2;
+
+	//Sort points by y.
+	if (p1->y < p0->y) { std::swap(p1, p0); };
+	if (p2->y < p1->y) { std::swap(p2, p1); };
+	if (p1->y < p0->y) { std::swap(p1, p0); };
+
+	//Check for natural flats
+	if (p0->y == p1->y) //Flat top check
+	{
+		if (p1->x < p0->x) { std::swap(p1, p0); };
+		DrawFlatTopTriangle(*p0, *p1, *p2, c);
+	}
+	else if (p2->y == p1->y) //Flat bottom Check
+	{
+		if (p2->x < p1->x) { std::swap(p1, p2); };
+		DrawFlatTopTriangle(*p0, *p1, *p2, c);
+	}
+	else //General Triangle
+	{
+		//v0 = top, v1 = mid, v2 = bottom
+		const Vec2* midPoint;
+		*midPoint = { 0.0f, p1->y };
+
+
+		if (midPoint->x < p1->x) { std::swap(p1, midPoint); };
+		DrawFlatBottomTriangle(*p0, *p1, *midPoint, c);
+		DrawFlatTopTriangle(*p1, *midPoint, *p2, c);
+	}
+
+}
+
+void Graphics::DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
+{
+	//v0 top left, v1 top right, v2 bottom point
+
+
+}
+
+void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
+{
+	//v0 top point, v1 bottom left, v2 bottom right
+
+
+}
