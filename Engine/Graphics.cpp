@@ -26,6 +26,7 @@
 #include <string>
 #include <array>
 #include <functional>
+#include <cmath>
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
@@ -348,7 +349,7 @@ void Graphics::DrawLine( float x1,float y1,float x2,float y2,Color c )
 
 		const float m = dx / dy;
 		float y = y1;
-		int lastIntY;
+		int lastIntY = 0;
 		for( float x = x1; y < y2; y += 1.0f,x += m )
 		{
 			lastIntY = int( y );
@@ -369,7 +370,7 @@ void Graphics::DrawLine( float x1,float y1,float x2,float y2,Color c )
 
 		const float m = dy / dx;
 		float x = x1;
-		int lastIntX;
+		int lastIntX = 0;
 		for( float y = y1; x < x2; x += 1.0f,y += m )
 		{
 			lastIntX = int( x );
@@ -430,13 +431,58 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 
 }
 
+void Graphics::DrawTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
+{
+	//Ptr creation for swaps.
+	const TexVertex* p0 = &v0;
+	const TexVertex* p1 = &v1;
+	const TexVertex* p2 = &v2;
+
+	//Sort points by y.
+	if (p1->pos.y < p0->pos.y) { std::swap(p1, p0); };
+	if (p2->pos.y < p1->pos.y) { std::swap(p2, p1); };
+	if (p1->pos.y < p0->pos.y) { std::swap(p1, p0); };
+
+	//Check for natural flats
+	if (p0->pos.y == p1->pos.y) //Flat top check
+	{
+		if (p1->pos.x < p0->pos.x) { std::swap(p1, p0); };
+		DrawFlatTopTriangleTex(*p0, *p1, *p2, texture);
+	}
+	else if (p2->pos.y == p1->pos.y) //Flat bottom Check
+	{
+		if (p2->pos.x < p1->pos.x) { std::swap(p1, p2); };
+		DrawFlatBottomTriangleTex(*p0, *p1, *p2, texture);
+	}
+	else //General Triangle
+	{
+		//v0 = top, v1 = mid, v2 = bottom
+
+		//Calculate mid point ratio within top and bottom points
+		const float alpha = (p1->pos.y - p0->pos.y) / (p2->pos.y - p0->pos.y);
+
+		const TexVertex mid = p0->InterpolateTo(*p2, alpha);
+
+		if (mid.pos.x < p1->pos.x) // Major Left
+		{
+			DrawFlatBottomTriangleTex(*p0, mid, *p1, texture);
+			DrawFlatTopTriangleTex(mid, *p1, *p2, texture);
+		}
+		else //Major Right
+		{
+			DrawFlatBottomTriangleTex(*p0, *p1, mid, texture);
+			DrawFlatTopTriangleTex(*p1, mid, *p2, texture);
+		}
+	}
+}
+
 void Graphics::SimpleSurfaceDraw(Vec2& pos, Surface& surface)
 {
-	for (int iy = 0; iy < surface.GetHeight(); ++iy)
+	for (unsigned int iy = 0; iy < surface.GetHeight(); ++iy)
 	{
-		for (int ix = 0; ix < surface.GetWidth(); ++ix)
+		for (unsigned int ix = 0; ix < surface.GetWidth(); ++ix)
 		{
-			PutPixel(ix + pos.x, iy + pos.y, surface.GetBufferPtr()[surface.GetWidth() * iy + ix]);
+			PutPixel(ix + (int)pos.x, iy + (int)pos.y, surface.GetPixel(ix, iy));
 		}
 	}
 }
@@ -485,6 +531,75 @@ void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2
 		for (int ix = xStart; ix < xEnd; ++ix)
 		{
 			PutPixel(ix, iy, c);
+		}
+	}
+}
+
+void Graphics::DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
+{
+	////v0 top left, v1 top right, v2 bottom point
+	//const float alpha = abs(v2.pos.y - v0.pos.y);
+	//const TexVertex L_run = v0 / alpha; //Change in x per y (inverse slope) of left line.
+	//const TexVertex R_run = v1 / alpha; //Same but for right.
+	//
+	//const int yStart = (int)ceilf(v0.pos.y - 0.5f);
+	//const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
+	//
+	//Vec2 c = v0.texCor;
+	//
+	//const Vec2 TriToTexInc = (v2.texCor - v0.texCor) / (v2.pos - v0.pos);
+	//
+	//for (int iy = yStart; iy < yEnd; ++iy, c += TriToTexInc)
+	//{
+	//	const float L_x = L_run.pos.x * (float(iy) + 0.5f - v0.pos.y) + v0.pos.x;
+	//	const float R_x = R_run.pos.x * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
+	//
+	//	float C_x = c.x;
+	//
+	//	const int xStart = (int)ceilf(L_x - 0.5f);
+	//	const int xEnd = (int)ceilf(R_x - 0.5f);
+	//	for (int ix = xStart; ix < xEnd; ++ix, C_x += TriToTexInc.x)
+	//	{
+	//		//PutPixel(ix, iy, texture.GetPixel(unsigned int(C_x * texture.GetWidth()), unsigned int(c.y * texture.GetHeight())));
+	//		PutPixel(ix, iy, Colors::White);
+	//	}
+	//}
+}
+
+void Graphics::DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
+{
+	//v0 top point, v1 bottom left, v2 bottom right
+	const float tex_width = float(texture.GetWidth());
+	const float tex_height = float(texture.GetHeight());
+	const float tex_clamp_x = tex_width - 1.0f;
+	const float tex_clamp_y = tex_height - 1.0f;
+
+	const float L_x_run = (v1.pos.x - v0.pos.x) / (v1.pos.y - v0.pos.y); //Change in x per y (inverse slope) of left line.
+	const float R_x_run = (v2.pos.x - v0.pos.x) / (v2.pos.y - v0.pos.y); //Same but for right.
+
+	float ColorXrange = abs(v2.texCor.x - v1.texCor.x);
+	
+	Vec2 colorLeft = v0.texCor;
+	Vec2 colorIncr = (v1.texCor - v0.texCor) / (v1.pos.y - v0.pos.y);
+
+	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
+	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
+
+	for (int iy = yStart; iy < yEnd; ++iy, colorLeft += colorIncr)
+	{
+		const float L_x = L_x_run * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
+		const float R_x = R_x_run * (float(iy) + 0.5f - v2.pos.y) + v2.pos.x;
+
+		const int xStart = (int)ceilf(L_x - 0.5f);
+		const int xEnd = (int)ceilf(R_x - 0.5f);
+
+		float C_x = colorLeft.x;
+		float cx_incr = ColorXrange / (xEnd - xStart);
+
+		for (int ix = xStart; ix < xEnd; ++ix, C_x += cx_incr)
+		{
+			//PutPixel(ix, iy, texture.GetPixel(unsigned int(std::fmod(C_x * tex_width, tex_clamp_x)), unsigned int(std::fmod(colorLeft.y * tex_height, tex_clamp_y))));
+			PutPixel(ix, iy, Colors::White);
 		}
 	}
 }

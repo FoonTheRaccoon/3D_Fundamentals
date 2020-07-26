@@ -68,31 +68,32 @@ void Object::DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst)
 
 void Object::DrawTextured(Graphics& gfx, PubeScreenTransformer& pst)
 {
-	////Get Tri's
-	//auto triangles = GetTriangles();
-	//
-	//TransformVerts(triangles);
-	//
-	//SetCullFlags(triangles);
-	//
-	////Apply Screen space transform
-	//for (auto& v : triangles.pos)
-	//{
-	//	pst.Transform(v);
-	//}
-	//
-	////Draw verts
-	//for (int i = 0; i < triangles.indices.size() / 3; ++i)
-	//{
-	//	if (!triangles.cullFlags[i])
-	//	{
-	//
-	//		gfx.DrawTriangleTex(
-	//			triangles[triangles.indices[i * 3]],
-	//			triangles[triangles.indices[i * 3 + 1]],
-	//			triangles[triangles.indices[i * 3 + 2]], texture);
-	//	}
-	//}
+	//Get Tri's
+	auto triangles = GetTriangles();
+	
+	TransformVerts(triangles);
+	
+	SetCullFlags(triangles);
+	
+	//Apply Screen space transform
+	for (auto& v : triangles.verts)
+	{
+		pst.Transform(v.pos);
+	}
+	
+	//Draw verts
+	for (int i = 0; i < triangles.indices.size() / 3; ++i)
+	{
+		if (!triangles.cullFlags[i])
+		{
+	
+			gfx.DrawTriangleTex(
+				triangles.verts[triangles.indices[i * 3]],
+				triangles.verts[triangles.indices[i * 3 + 1]],
+				triangles.verts[triangles.indices[i * 3 + 2]],
+				texture);
+		}
+	}
 }
 
 void Object::TransformVerts(IndexedTriangleList& triangles)

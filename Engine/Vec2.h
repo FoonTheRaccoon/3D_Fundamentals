@@ -116,6 +116,12 @@ public:
 	{
 		return _Vec2( *this ) /= rhs;
 	}
+	_Vec2	operator/(const _Vec2& rhs) const
+	{
+		x / rhs.x;
+		y / rhs.y;
+		return *this;
+	}
 	bool	operator==( const _Vec2 &rhs ) const
 	{
 		return x == rhs.x && y == rhs.y;
@@ -124,9 +130,13 @@ public:
 	{
 		return !(*this == rhs);
 	}
+	_Vec2	InterpolateTo(const _Vec2& dest, T alpha) const
+	{
+		return *this + (dest - *this) * alpha;
+	}
 public:
-	T x;
-	T y;
+	T x = (T)0;
+	T y = (T)0;
 };
 
 typedef _Vec2<float> Vec2;

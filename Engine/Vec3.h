@@ -139,8 +139,16 @@ public:
 	{
 		return !(*this == rhs);
 	}
+	_Vec3	InterpolateTo(const _Vec3& dest, T alpha) const
+	{
+		return *this + (dest - *this) * alpha;
+	}
+	_Vec2<T> operator()(const _Vec3& rhs)
+	{
+		return _Vec2<T>{rhs.x, rhs.y};
+	}
 public:
-	T z;
+	T z = (T)0;
 };
 
 typedef _Vec3<float> Vec3;

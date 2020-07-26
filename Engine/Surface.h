@@ -59,7 +59,7 @@ public:
 		pitch( source.pitch )
 	{}
 	Surface( Surface& ) = delete;
-	Surface& operator=( Surface&& donor )
+	Surface& operator=( Surface&& donor ) noexcept
 	{
 		width = donor.width;
 		height = donor.height;
@@ -126,10 +126,6 @@ public:
 	{
 		return Surface(0u,0u,0u);
 	}
-	static std::vector<Vec2> DefaultTexCor()
-	{
-		return std::vector<Vec2>(0);
-	}
 private:
 	// calculate pixel pitch required for given byte aligment (must be multiple of 4 bytes)
 	static unsigned int GetPitch( unsigned int width,unsigned int byteAlignment )
@@ -147,7 +143,7 @@ private:
 	{}
 private:
 	std::unique_ptr<Color[]> pBuffer;
-	unsigned int width;
-	unsigned int height;
-	unsigned int pitch; // pitch is in PIXELS, not bytes!
+	unsigned int width = 0u;
+	unsigned int height = 0u;
+	unsigned int pitch = 0u; // pitch is in PIXELS, not bytes!
 };

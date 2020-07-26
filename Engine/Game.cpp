@@ -27,7 +27,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	cube(wnd.kbd, wnd.mouse, 1.0f ),
-	unwrapedCube(Surface::FromFile(L"Images\\dice_unwrap.png"))
+	die(wnd.kbd, wnd.mouse, 1.0f)
 {
 }
 
@@ -42,10 +42,12 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = 1.0f / 60.0f;
-	cube.Update(dt);
+	//cube.Update(dt);
+	die.Update(dt);
 }
 
 void Game::ComposeFrame()
 {	
-	cube.DrawTextureless(gfx, pst);
+	//cube.DrawTextureless(gfx, pst);
+	die.DrawTextured(gfx, pst);
 }

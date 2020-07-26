@@ -23,6 +23,7 @@
 #include "Graphics.h"
 #include "PubeScreenTransformer.h"
 #include "UnskinnedCube.h"
+#include "DiceModel.h"
 
 class Game
 {
@@ -44,6 +45,6 @@ private:
 	/*  User Variables              */
 	PubeScreenTransformer pst;
 	UnskinnedCube cube;
-	Surface unwrapedCube;
+	DiceModel die;
 	/********************************/
 };
