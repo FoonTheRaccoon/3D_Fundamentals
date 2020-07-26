@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Vec3.h"
+#include <assert.h>
 
 struct IndexedTriangleList
 {

@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Vec3.h"
-#include <vector>
-#include "IndexedLineList.h"
-#include "IndexedTriangleList.h"
+#include "Object.h"
 
-class Cube
+
+class Cube : public Object
 {
 public:
-	Cube( float size )
+	Cube(Keyboard& kbd, Mouse& mouse, float size )
+		: Object(kbd, mouse)
 	{
 		const float side = size / 2.0f;
 		vertices.emplace_back( -side,-side,-side );
@@ -29,7 +28,7 @@ public:
 			4,5,  5,7,	7,6,  6,4 }
 		};
 	}
-	IndexedTriangleList GetTriangles() const
+	IndexedTriangleList GetTriangles() const override
 	{
 		return{
 			vertices, {
@@ -42,6 +41,4 @@ public:
 			}
 		};
 	}
-private:
-	std::vector<Vec3> vertices;
 };
