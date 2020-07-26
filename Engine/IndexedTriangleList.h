@@ -7,7 +7,7 @@
 
 struct IndexedTriangleList
 {
-	IndexedTriangleList(TexVertex verts, std::vector<size_t> indices_in)
+	IndexedTriangleList(const TexVertex& verts, std::vector<size_t> indices_in)
 		:
 		verts(std::move(verts)),
 		indices(std::move(indices_in))
