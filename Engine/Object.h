@@ -9,8 +9,8 @@
 class Object
 {
 public:
-	Object(Keyboard& kbd, Mouse& mouse, std::vector<TexVertex> model, Surface& texture = Surface::DefaultSurface())
-		: kbd(kbd), mouse(mouse), model(std::move(model)), texture(texture)
+	Object(Keyboard& kbd, Mouse& mouse, std::vector<TexVertex> model, Surface texture = Surface::DefaultSurface())
+		: kbd(kbd), mouse(mouse), model(std::move(model)), texture(std::move(texture))
 	{}
 	void Update(float dt);
 	void DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst);
@@ -27,7 +27,7 @@ protected:
 	float theta_z = 0.0f;
 	std::vector<TexVertex> model;
 	//Refs
-	Surface& texture;
+	Surface texture;
 	Keyboard& kbd;
 	Mouse& mouse;
 	//Color Wheel

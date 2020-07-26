@@ -27,6 +27,7 @@
 #include <array>
 #include <functional>
 #include <cmath>
+#include <algorithm>
 
 // Ignore the intellisense error "cannot open source file" for .shh files.
 // They will be created during the build sequence before the preprocessor runs.
@@ -537,33 +538,40 @@ void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2
 
 void Graphics::DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
 {
-	////v0 top left, v1 top right, v2 bottom point
-	//const float alpha = abs(v2.pos.y - v0.pos.y);
-	//const TexVertex L_run = v0 / alpha; //Change in x per y (inverse slope) of left line.
-	//const TexVertex R_run = v1 / alpha; //Same but for right.
-	//
-	//const int yStart = (int)ceilf(v0.pos.y - 0.5f);
-	//const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
-	//
-	//Vec2 c = v0.texCor;
-	//
-	//const Vec2 TriToTexInc = (v2.texCor - v0.texCor) / (v2.pos - v0.pos);
-	//
-	//for (int iy = yStart; iy < yEnd; ++iy, c += TriToTexInc)
-	//{
-	//	const float L_x = L_run.pos.x * (float(iy) + 0.5f - v0.pos.y) + v0.pos.x;
-	//	const float R_x = R_run.pos.x * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
-	//
-	//	float C_x = c.x;
-	//
-	//	const int xStart = (int)ceilf(L_x - 0.5f);
-	//	const int xEnd = (int)ceilf(R_x - 0.5f);
-	//	for (int ix = xStart; ix < xEnd; ++ix, C_x += TriToTexInc.x)
-	//	{
-	//		//PutPixel(ix, iy, texture.GetPixel(unsigned int(C_x * texture.GetWidth()), unsigned int(c.y * texture.GetHeight())));
-	//		PutPixel(ix, iy, Colors::White);
-	//	}
-	//}
+	//v0 top left, v1 top right, v2 bottom point
+	const float tex_width = float(texture.GetWidth());
+	const float tex_height = float(texture.GetHeight());
+	const float tex_clamp_x = tex_width - 1.0f;
+	const float tex_clamp_y = tex_height - 1.0f;
+
+	const float L_x_run = (v2.pos.x - v0.pos.x) / (v2.pos.y - v0.pos.y); //Change in x per y (inverse slope) of left line.
+	const float R_x_run = (v2.pos.x - v1.pos.x) / (v2.pos.y - v1.pos.y); //Same but for right.
+
+	Vec2 colorLeft = v0.texCor;
+	Vec2 colorIncr = (v0.texCor - v2.texCor) / (v0.pos.y - v2.pos.y);
+
+	Vec2 colorXloopVec = v0.texCor - v2.texCor;
+
+	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
+	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
+
+	for (int iy = yStart; iy < yEnd; ++iy, colorLeft += colorIncr)
+	{
+		const float L_x = L_x_run * (float(iy) + 0.5f - v0.pos.y) + v0.pos.x;
+		const float R_x = R_x_run * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
+
+		const int xStart = (int)ceilf(L_x - 0.5f);
+		const int xEnd = (int)ceilf(R_x - 0.5f);
+
+		Vec2 C = colorLeft;
+		Vec2 c_incr = colorXloopVec / (xEnd - xStart);
+
+		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
+		{
+			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(C.y * tex_height, 0.0f, tex_clamp_y)));
+			//PutPixel(ix, iy, Colors::White);
+		}
+	}
 }
 
 void Graphics::DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
@@ -573,33 +581,33 @@ void Graphics::DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v
 	const float tex_height = float(texture.GetHeight());
 	const float tex_clamp_x = tex_width - 1.0f;
 	const float tex_clamp_y = tex_height - 1.0f;
-
+	
 	const float L_x_run = (v1.pos.x - v0.pos.x) / (v1.pos.y - v0.pos.y); //Change in x per y (inverse slope) of left line.
 	const float R_x_run = (v2.pos.x - v0.pos.x) / (v2.pos.y - v0.pos.y); //Same but for right.
-
-	float ColorXrange = abs(v2.texCor.x - v1.texCor.x);
 	
 	Vec2 colorLeft = v0.texCor;
 	Vec2 colorIncr = (v1.texCor - v0.texCor) / (v1.pos.y - v0.pos.y);
-
+	
+	Vec2 colorXloopVec = v2.texCor - v1.texCor;
+	
 	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
 	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
-
+	
 	for (int iy = yStart; iy < yEnd; ++iy, colorLeft += colorIncr)
 	{
 		const float L_x = L_x_run * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
 		const float R_x = R_x_run * (float(iy) + 0.5f - v2.pos.y) + v2.pos.x;
-
+	
 		const int xStart = (int)ceilf(L_x - 0.5f);
 		const int xEnd = (int)ceilf(R_x - 0.5f);
-
-		float C_x = colorLeft.x;
-		float cx_incr = ColorXrange / (xEnd - xStart);
-
-		for (int ix = xStart; ix < xEnd; ++ix, C_x += cx_incr)
+	
+		Vec2 C = colorLeft;
+		Vec2 c_incr = colorXloopVec / (xEnd - xStart);
+	
+		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			//PutPixel(ix, iy, texture.GetPixel(unsigned int(std::fmod(C_x * tex_width, tex_clamp_x)), unsigned int(std::fmod(colorLeft.y * tex_height, tex_clamp_y))));
-			PutPixel(ix, iy, Colors::White);
+			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(C.y * tex_height, 0.0f, tex_clamp_y)));
+			//PutPixel(ix, iy, Colors::White);
 		}
 	}
 }
