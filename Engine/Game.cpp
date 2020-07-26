@@ -42,11 +42,10 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = 1.0f / 60.0f;
-	//cube.Update(dt);
+	cube.Update(dt);
 }
 
 void Game::ComposeFrame()
 {	
-	//cube.Draw(gfx, pst, cube);
-	gfx.SimpleSurfaceDraw(Vec2(100.0f, 100.0f), unwrapedCube);
+	cube.DrawTextureless(gfx, pst);
 }

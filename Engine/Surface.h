@@ -26,6 +26,7 @@
 #include <string>
 #include <assert.h>
 #include <memory>
+#include <vector>
 
 
 class Surface
@@ -50,7 +51,7 @@ public:
 		:
 		Surface( width,height,width )
 	{}
-	Surface( Surface&& source )
+	Surface( Surface&& source ) noexcept
 		:
 		pBuffer( std::move( source.pBuffer ) ),
 		width( source.width ),
@@ -121,7 +122,14 @@ public:
 	static Surface FromFile( const std::wstring& name );
 	void Save( const std::wstring& filename ) const;
 	void Copy( const Surface& src );
-	
+	static Surface DefaultSurface()
+	{
+		return Surface(0u,0u,0u);
+	}
+	static std::vector<Vec2> DefaultTexCor()
+	{
+		return std::vector<Vec2>(0);
+	}
 private:
 	// calculate pixel pitch required for given byte aligment (must be multiple of 4 bytes)
 	static unsigned int GetPitch( unsigned int width,unsigned int byteAlignment )

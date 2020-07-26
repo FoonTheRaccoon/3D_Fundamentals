@@ -22,7 +22,7 @@
 
 #include "Graphics.h"
 #include "PubeScreenTransformer.h"
-#include "Cube.h"
+#include "UnskinnedCube.h"
 
 class Game
 {
@@ -43,7 +43,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	PubeScreenTransformer pst;
-	Cube cube;
+	UnskinnedCube cube;
 	Surface unwrapedCube;
 	/********************************/
 };
