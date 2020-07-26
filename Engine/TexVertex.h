@@ -7,9 +7,9 @@
 
 struct TexVertex
 {
-	TexVertex(std::vector<Vec3> pos = std::vector<Vec3>(0), std::vector<Vec2> texCor = std::vector<Vec2>(0))
+	TexVertex(Vec3 pos = {0.0f, 0.0f, 0.0f}, Vec2 texCor = { 0.0f, 0.0f })
 		: pos(pos), texCor(texCor)
 	{}
-	std::vector<Vec3> pos;
-	std::vector<Vec2> texCor;
+	Vec3 pos;
+	Vec2 texCor;
 };

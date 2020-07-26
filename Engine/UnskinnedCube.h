@@ -22,21 +22,21 @@ public:
 			}
 		};
 	}
-	static TexVertex MakeUnskinedCube(float size)
+	static std::vector<TexVertex> MakeUnskinedCube(float size)
 	{
-		std::vector<Vec3> tmp_model;
+		std::vector<TexVertex> tmp_model;
 		tmp_model.reserve(8);
 		const float side = size / 2.0f;
-		tmp_model.emplace_back(-side, -side, -side);
-		tmp_model.emplace_back(side, -side, -side);
-		tmp_model.emplace_back(-side, side, -side);
-		tmp_model.emplace_back(side, side, -side);
-		tmp_model.emplace_back(-side, -side, side);
-		tmp_model.emplace_back(side, -side, side);
-		tmp_model.emplace_back(-side, side, side);
-		tmp_model.emplace_back(side, side, side);
+		tmp_model.emplace_back(Vec3{ -side, -side, -side });
+		tmp_model.emplace_back(Vec3{ side, -side, -side });
+		tmp_model.emplace_back(Vec3{ -side, side, -side });
+		tmp_model.emplace_back(Vec3{ side, side, -side });
+		tmp_model.emplace_back(Vec3{ -side, -side, side });
+		tmp_model.emplace_back(Vec3{ side, -side, side });
+		tmp_model.emplace_back(Vec3{ -side, side, side });
+		tmp_model.emplace_back(Vec3{ side, side, side });
 
-		return { tmp_model };
+		return tmp_model;
 	}
 
 };

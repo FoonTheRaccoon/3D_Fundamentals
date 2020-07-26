@@ -21,41 +21,26 @@ public:
 			}
 		};
 	}
-	static TexVertex MakeDiceModel(float size)
+	static std::vector<TexVertex> MakeDiceModel(float size)
 	{
-		TexVertex tmp_model;
-		tmp_model.pos.reserve(14);
-		tmp_model.texCor.reserve(14);
+		std::vector<TexVertex> tmp_model;
+		tmp_model.reserve(14);
 		const float side = size / 2.0f;
-		tmp_model.pos.emplace_back(-side, side, -side);		//1
-		tmp_model.texCor.emplace_back(0.0f, 0.333f);
-		tmp_model.pos.emplace_back(-side, side, side);		//2
-		tmp_model.texCor.emplace_back(0.0f, 0.666f);
-		tmp_model.pos.emplace_back(-side, side, -side);		//3
-		tmp_model.texCor.emplace_back(0.25f, 0.0f);
-		tmp_model.pos.emplace_back(-side, -side, -side);	//4
-		tmp_model.texCor.emplace_back(0.25f, 0.333f);
-		tmp_model.pos.emplace_back(-side, -side, side);		//5
-		tmp_model.texCor.emplace_back(0.25f, 0.666f);
-		tmp_model.pos.emplace_back(-side, side, side);		//6
-		tmp_model.texCor.emplace_back(0.25f, 1.0f);
-		tmp_model.pos.emplace_back(side, side, -side);		//7
-		tmp_model.texCor.emplace_back(0.5f, 0.0f);
-		tmp_model.pos.emplace_back(side, -side, -side);		//8
-		tmp_model.texCor.emplace_back(0.5f, 0.333f);
-		tmp_model.pos.emplace_back(side, -side, side);		//9
-		tmp_model.texCor.emplace_back(0.5f, 0.666f);
-		tmp_model.pos.emplace_back(side, side, side);		//10
-		tmp_model.texCor.emplace_back(0.5f, 1.0f);
-		tmp_model.pos.emplace_back(side, side, -side);		//11
-		tmp_model.texCor.emplace_back(0.75f, 0.333f);
-		tmp_model.pos.emplace_back(side, side, side);		//12
-		tmp_model.texCor.emplace_back(0.75f, 0.666f);
-		tmp_model.pos.emplace_back(-side, side, -side);		//13
-		tmp_model.texCor.emplace_back(1.0f, 0.333f);
-		tmp_model.pos.emplace_back(-side, side, side);		//14
-		tmp_model.texCor.emplace_back(1.0f, 0.666f);
-		return { tmp_model };
+		tmp_model.emplace_back(Vec3{ -side, side, -side },	Vec2{ 0.0f, 0.333f});	//1
+		tmp_model.emplace_back(Vec3{ -side, side, side },	Vec2{ 0.0f, 0.666f });	//2
+		tmp_model.emplace_back(Vec3{ -side, side, -side },	Vec2{ 0.25f, 0.0f });	//3
+		tmp_model.emplace_back(Vec3{ -side, -side, -side },	Vec2{ 0.25f, 0.333f });	//4
+		tmp_model.emplace_back(Vec3{ -side, -side, side },	Vec2{ 0.25f, 0.666f });	//5
+		tmp_model.emplace_back(Vec3{ -side, side, side },	Vec2{ 0.25f, 1.0f });	//6
+		tmp_model.emplace_back(Vec3{ side, side, -side },	Vec2{ 0.5f, 0.0f });	//7
+		tmp_model.emplace_back(Vec3{ side, -side, -side },	Vec2{ 0.5f, 0.333f });	//8
+		tmp_model.emplace_back(Vec3{ side, -side, side },	Vec2{ 0.5f, 0.666f });	//9
+		tmp_model.emplace_back(Vec3{ side, side, side },	Vec2{ 0.5f, 1.0f });	//10
+		tmp_model.emplace_back(Vec3{ side, side, -side },	Vec2{ 0.75f, 0.333f });	//11
+		tmp_model.emplace_back(Vec3{ side, side, side },	Vec2{ 0.75f, 0.666f });	//12
+		tmp_model.emplace_back(Vec3{ -side, side, -side },	Vec2{ 1.0f, 0.333f });	//13
+		tmp_model.emplace_back(Vec3{ -side, side, side },	Vec2{ 1.0f, 0.666f });	//14
+		return tmp_model;
 	}
 
 };

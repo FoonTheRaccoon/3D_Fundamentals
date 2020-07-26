@@ -46,9 +46,9 @@ void Object::DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst)
 	SetCullFlags(triangles);
 	
 	//Apply Screen space transform
-	for (auto& v : triangles.verts.pos)
+	for (auto& v : triangles.verts)
 	{
-		pst.Transform(v);
+		pst.Transform(v.pos);
 	}
 
 	//Draw verts
@@ -58,9 +58,10 @@ void Object::DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst)
 		{
 
 			gfx.DrawTriangle(
-				triangles.verts.pos[triangles.indices[i * 3]],
-				triangles.verts.pos[triangles.indices[i * 3 + 1]],
-				triangles.verts.pos[triangles.indices[i * 3 + 2]], colors[i % 12]);
+				triangles.verts[triangles.indices[i * 3]].pos,
+				triangles.verts[triangles.indices[i * 3 + 1]].pos,
+				triangles.verts[triangles.indices[i * 3 + 2]].pos, 
+				colors[i % 12]);
 		}
 	}
 }
@@ -102,10 +103,10 @@ void Object::TransformVerts(IndexedTriangleList& triangles)
 		Mat3::RotationY(theta_y) *
 		Mat3::RotationZ(theta_z);
 	//Apply Rot + Offset
-	for (auto& v : triangles.verts.pos)
+	for (auto& v : triangles.verts)
 	{
-		v *= rot;
-		v += { 0.0f, 0.0f, offset_z };
+		v.pos *= rot;
+		v.pos += { 0.0f, 0.0f, offset_z };
 	}
 }
 
@@ -114,9 +115,9 @@ void Object::SetCullFlags(IndexedTriangleList& triangles)
 	//Apply back face culling flags
 	for (int i = 0; i < (triangles.indices.size() / 3); ++i)
 	{
-		const Vec3& v0 = triangles.verts.pos[triangles.indices[i * 3]];
-		const Vec3& v1 = triangles.verts.pos[triangles.indices[i * 3 + 1]];
-		const Vec3& v2 = triangles.verts.pos[triangles.indices[i * 3 + 2]];
+		const Vec3& v0 = triangles.verts[triangles.indices[i * 3]].pos;
+		const Vec3& v1 = triangles.verts[triangles.indices[i * 3 + 1]].pos;
+		const Vec3& v2 = triangles.verts[triangles.indices[i * 3 + 2]].pos;
 		triangles.cullFlags[i] = (v1 - v0).X(v2 - v0) * v0 >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
 	}
 }

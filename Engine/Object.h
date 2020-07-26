@@ -9,7 +9,7 @@
 class Object
 {
 public:
-	Object(Keyboard& kbd, Mouse& mouse, TexVertex model, Surface& texture = Surface::DefaultSurface())
+	Object(Keyboard& kbd, Mouse& mouse, std::vector<TexVertex> model, Surface& texture = Surface::DefaultSurface())
 		: kbd(kbd), mouse(mouse), model(std::move(model)), texture(texture)
 	{}
 	void Update(float dt);
@@ -25,7 +25,7 @@ protected:
 	float theta_x = 0.0f;
 	float theta_y = 0.0f;
 	float theta_z = 0.0f;
-	TexVertex model;
+	std::vector<TexVertex> model;
 	//Refs
 	Surface& texture;
 	Keyboard& kbd;

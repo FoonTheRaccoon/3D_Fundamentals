@@ -7,7 +7,7 @@
 
 struct IndexedTriangleList
 {
-	IndexedTriangleList(const TexVertex& verts, std::vector<size_t> indices_in)
+	IndexedTriangleList(std::vector<TexVertex> verts, std::vector<size_t> indices_in)
 		:
 		verts(std::move(verts)),
 		indices(std::move(indices_in))
@@ -15,7 +15,7 @@ struct IndexedTriangleList
 		assert(indices.size() % 3 == 0);
 		cullFlags.resize(indices.size() / 3, false);
 	}
-	TexVertex verts;
+	std::vector<TexVertex> verts;
 	std::vector<size_t> indices;
 	std::vector<bool> cullFlags;
 };
