@@ -430,6 +430,17 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 
 }
 
+void Graphics::SimpleSurfaceDraw(Vec2& pos, Surface& surface)
+{
+	for (int iy = 0; iy < surface.GetHeight(); ++iy)
+	{
+		for (int ix = 0; ix < surface.GetWidth(); ++ix)
+		{
+			PutPixel(ix + pos.x, iy + pos.y, surface.GetBufferPtr()[surface.GetWidth() * iy + ix]);
+		}
+	}
+}
+
 void Graphics::DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
 {
 	//v0 top left, v1 top right, v2 bottom point

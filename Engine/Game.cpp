@@ -27,7 +27,7 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	cube(wnd.kbd, wnd.mouse, 1.0f ),
-	unwrapedCube(Surface::FromFile("dice_unwrap.png"))
+	unwrapedCube(Surface::FromFile(L"Images\\dice_unwrap.png"))
 {
 }
 
@@ -48,5 +48,5 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {	
 	//cube.Draw(gfx, pst, cube);
-
+	gfx.SimpleSurfaceDraw(Vec2(100.0f, 100.0f), unwrapedCube);
 }
