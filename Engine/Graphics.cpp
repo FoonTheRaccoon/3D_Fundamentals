@@ -412,9 +412,9 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 		//v0 = top, v1 = mid, v2 = bottom
 
 		//Calculate mid point ratio within top and bottom points
-		const float y_Ratio = (p1->y - p0->y) / (p2->y - p0->y);
+		const float alpha = (p1->y - p0->y) / (p2->y - p0->y);
 		
-		const Vec2 mid = {p0->x + (p2->x - p0->x) * y_Ratio, p1->y};
+		const Vec2 mid = p0->InterpolateTo(*p2, alpha);
 
 		if (mid.x < p1->x) // Major Left
 		{
@@ -491,44 +491,43 @@ void Graphics::SimpleSurfaceDraw(Vec2& pos, Surface& surface)
 void Graphics::DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
 {
 	//v0 top left, v1 top right, v2 bottom point
+	Vec2 R_line = v1;
 
-	const float L_x_run = (v2.x - v0.x) / (v2.y - v0.y); //Change in x per y (inverse slope) of left line.
-	const float R_x_run = (v2.x - v1.x) / (v2.y - v1.y); //Same but for right.
+	const float alpha = (v2.y - v0.y);
 
-	const int yStart = (int)ceilf(v0.y - 0.5f);
-	const int yEnd = (int)ceilf(v2.y - 0.5f);
+	const Vec2 dL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const Vec2 dR = (v2 - v1) / alpha; //Same but for right.
 
-	for (int iy = yStart; iy < yEnd; ++iy)
-	{
-		const float L_x = L_x_run * (float(iy) + 0.5f - v0.y) + v0.x;
-		const float R_x = R_x_run * (float(iy) + 0.5f - v1.y) + v1.x;
-
-		const int xStart = (int)ceilf(L_x - 0.5f);
-		const int xEnd = (int)ceilf(R_x - 0.5f);
-		for (int ix = xStart; ix < xEnd; ++ix)
-		{
-			PutPixel(ix, iy, c);
-		}
-	}
+	DrawFlatTriangle(v0, v1, v2, c, dL, dR, R_line);
 }
 
 void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c)
 {
 	//v0 top point, v1 bottom left, v2 bottom right
+	Vec2 R_line = v0;
 
-	const float L_x_run = (v1.x - v0.x) / (v1.y - v0.y); //Change in x per y (inverse slope) of left line.
-	const float R_x_run = (v2.x - v0.x) / (v2.y - v0.y); //Same but for right.
+	const float alpha = (v2.y - v0.y);
 
+	const Vec2 dL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const Vec2 dR = (v2 - v0) / alpha; //Same but for right.
+
+	DrawFlatTriangle(v0, v1, v2, c, dL, dR, R_line);
+}
+
+void Graphics::DrawFlatTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c, const Vec2& dL, const Vec2& dR, Vec2& R_line)
+{
+	//Add Right Side Line
+	Vec2 L_line = v0;
+
+	//Set YBounds
 	const int yStart = (int)ceilf(v0.y - 0.5f);
 	const int yEnd = (int)ceilf(v2.y - 0.5f);
 
-	for (int iy = yStart; iy < yEnd; ++iy)
+	for (int iy = yStart; iy < yEnd; ++iy, L_line += dL, R_line += dR)
 	{
-		const float L_x = L_x_run * (float(iy) + 0.5f - v1.y) + v1.x;
-		const float R_x = R_x_run * (float(iy) + 0.5f - v2.y) + v2.x;
+		const int xStart = (int)ceilf(L_line.x - 0.5f);
+		const int xEnd = (int)ceilf(R_line.x - 0.5f);
 
-		const int xStart = (int)ceilf(L_x - 0.5f);
-		const int xEnd = (int)ceilf(R_x - 0.5f);
 		for (int ix = xStart; ix < xEnd; ++ix)
 		{
 			PutPixel(ix, iy, c);
@@ -539,79 +538,60 @@ void Graphics::DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2
 void Graphics::DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
 {
 	//v0 top left, v1 top right, v2 bottom point
-	const float tex_width = float(texture.GetWidth());
-	const float tex_height = float(texture.GetHeight());
-	const float tex_clamp_x = tex_width - 1.0f;
-	const float tex_clamp_y = tex_height - 1.0f;
-
-	Vec2 L_Tex_line = v0.texCor;
-	Vec2 R_Tex_line = v1.texCor;
+	TexVertex R_line = v1;
 
 	const float alpha = (v2.pos.y - v0.pos.y);
 
-	const TexVertex dvL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
-	const TexVertex dvR = (v2 - v1) / alpha; //Same but for right.
+	const TexVertex dL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const TexVertex dR = (v2 - v1) / alpha; //Same but for right.
 
-	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
-	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
-
-	for (int iy = yStart; iy < yEnd; ++iy, L_Tex_line += dvL.texCor, R_Tex_line += dvR.texCor)
-	{
-		const float L_x = dvL.pos.x * (float(iy) + 0.5f - v0.pos.y) + v0.pos.x;
-		const float R_x = dvR.pos.x * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
-
-		const int xStart = (int)ceilf(L_x - 0.5f);
-		const int xEnd = (int)ceilf(R_x - 0.5f);
-
-		const float steps = float(xEnd - xStart);
-
-		Vec2 C = L_Tex_line;
-		Vec2 c_incr = (R_Tex_line - L_Tex_line) / steps;
-
-		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
-		{
-			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(C.y * tex_height, 0.0f, tex_clamp_y)));
-			//PutPixel(ix, iy, Colors::White);
-		}
-	}
+	DrawFlatTriangleTex(v0, v1, v2, texture, dL, dR, R_line);
 }
 
 void Graphics::DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
 {
 	//v0 top point, v1 bottom left, v2 bottom right
+	//Left line is the same formula for both triangles
+	TexVertex R_line = v0;
+
+	const float alpha = (v2.pos.y - v0.pos.y);
+
+	const TexVertex dL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const TexVertex dR = (v2 - v0) / alpha; //Same but for right.
+	
+	DrawFlatTriangleTex(v0, v1, v2, texture, dL, dR, R_line);
+}
+
+void Graphics::DrawFlatTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture, const TexVertex& dL, const TexVertex& dR, TexVertex& R_line)
+{
+	//Set Texture Bounds
 	const float tex_width = float(texture.GetWidth());
 	const float tex_height = float(texture.GetHeight());
 	const float tex_clamp_x = tex_width - 1.0f;
 	const float tex_clamp_y = tex_height - 1.0f;
 
-	Vec2 L_Tex_line = v0.texCor;
-	Vec2 R_Tex_line = v0.texCor;
+	//Add Right Side Line
+	TexVertex L_line = v0;
 
-	const float alpha = (v2.pos.y - v0.pos.y);
-
-	const TexVertex dvL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
-	const TexVertex dvR = (v2 - v0) / alpha; //Same but for right.
-	
+	//Set YBounds
 	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
 	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
 	
-	for (int iy = yStart; iy < yEnd; ++iy, L_Tex_line += dvL.texCor, R_Tex_line += dvR.texCor)
-	{
-		const float L_x = dvL.pos.x * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
-		const float R_x = dvR.pos.x * (float(iy) + 0.5f - v2.pos.y) + v2.pos.x;
-	
-		const int xStart = (int)ceilf(L_x - 0.5f);
-		const int xEnd = (int)ceilf(R_x - 0.5f);
-	
-		const float steps = float(xEnd - xStart);
+	//Do Prestep
+	L_line += dL * (float(yStart) + 0.5f - v0.pos.y);
+	R_line += dR * (float(yStart) + 0.5f - v0.pos.y);
 
-		Vec2 C = L_Tex_line;
-		Vec2 c_incr = (R_Tex_line - L_Tex_line) / steps;
-		
+	for (int iy = yStart; iy < yEnd; ++iy, L_line += dL, R_line += dR)
+	{
+		const int xStart = (int)ceilf(L_line.pos.x - 0.5f);
+		const int xEnd = (int)ceilf(R_line.pos.x - 0.5f);
+
+		const Vec2 c_incr = (R_line.texCor - L_line.texCor) / (R_line.pos.x - L_line.pos.x);
+		Vec2 C = L_line.texCor + c_incr * (float(xStart) + 0.5f - L_line.pos.x);
+
 		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(C.y * tex_height, 0.0f, tex_clamp_y)));
-			//PutPixel(ix, iy, Colors::White);
+			PutPixel(ix, iy, texture.GetPixel((int)std::fmod(C.x * tex_width, tex_clamp_x), (int)std::fmod(C.y * tex_height, tex_clamp_y)));
 		}
 	}
 }

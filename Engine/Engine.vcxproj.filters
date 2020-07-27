@@ -149,5 +149,8 @@
     <Image Include="Images\dice_unwrap.png">
       <Filter>Images</Filter>
     </Image>
+    <Image Include="Images\dice_skin.png">
+      <Filter>Images</Filter>
+    </Image>
   </ItemGroup>
 </Project>

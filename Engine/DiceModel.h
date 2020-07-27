@@ -6,7 +6,7 @@ class DiceModel : public Object
 {
 public:
 	DiceModel(Keyboard& kbd, Mouse& mouse, float size)
-		: Object(kbd, mouse, MakeDiceModel(size), Surface::FromFile(L"Images\\dice_unwrap.png"))
+		: Object(kbd, mouse, MakeDiceModel(size), Surface::FromFile(L"Images\\dice_skin.png"))
 	{}
 	IndexedTriangleList GetTriangles() const override
 	{
@@ -21,27 +21,6 @@ public:
 			}
 		};
 	}
-	//static std::vector<TexVertex> MakeDiceModel(float size)
-	//{
-	//	std::vector<TexVertex> tmp_model;
-	//	tmp_model.reserve(14);
-	//	const float side = size / 2.0f;
-	//	tmp_model.emplace_back(Vec3{ -side, side, -side },	Vec2{ 0.0f, 0.333f});	//1
-	//	tmp_model.emplace_back(Vec3{ -side, side, side },	Vec2{ 0.0f, 0.666f });	//2
-	//	tmp_model.emplace_back(Vec3{ -side, side, -side },	Vec2{ 0.25f, 0.0f });	//3
-	//	tmp_model.emplace_back(Vec3{ -side, -side, -side },	Vec2{ 0.25f, 0.333f });	//4
-	//	tmp_model.emplace_back(Vec3{ -side, -side, side },	Vec2{ 0.25f, 0.666f });	//5
-	//	tmp_model.emplace_back(Vec3{ -side, side, side },	Vec2{ 0.25f, 1.0f });	//6
-	//	tmp_model.emplace_back(Vec3{ side, side, -side },	Vec2{ 0.5f, 0.0f });	//7
-	//	tmp_model.emplace_back(Vec3{ side, -side, -side },	Vec2{ 0.5f, 0.333f });	//8
-	//	tmp_model.emplace_back(Vec3{ side, -side, side },	Vec2{ 0.5f, 0.666f });	//9
-	//	tmp_model.emplace_back(Vec3{ side, side, side },	Vec2{ 0.5f, 1.0f });	//10
-	//	tmp_model.emplace_back(Vec3{ side, side, -side },	Vec2{ 0.75f, 0.333f });	//11
-	//	tmp_model.emplace_back(Vec3{ side, side, side },	Vec2{ 0.75f, 0.666f });	//12
-	//	tmp_model.emplace_back(Vec3{ -side, side, -side },	Vec2{ 1.0f, 0.333f });	//13
-	//	tmp_model.emplace_back(Vec3{ -side, side, side },	Vec2{ 1.0f, 0.666f });	//14
-	//	return tmp_model;
-	//}
 	static std::vector<TexVertex> MakeDiceModel(float size)
 	{
 		std::vector<TexVertex> tmp_model;

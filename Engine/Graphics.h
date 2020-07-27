@@ -75,10 +75,14 @@ public:
 	void SimpleSurfaceDraw(Vec2& pos, Surface& surface);
 	~Graphics();
 private:
+	//Without Texture
 	void DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
 	void DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
+	void DrawFlatTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c, const Vec2& dL, const Vec2& dR, Vec2& R_line);
+	//With Texture
 	void DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture);
 	void DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture);
+	void DrawFlatTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture, const TexVertex& dL, const TexVertex& dR, TexVertex& R_line);
 private:
 	GDIPlusManager										gdipMan;
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
