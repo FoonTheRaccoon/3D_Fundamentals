@@ -4,39 +4,39 @@ void Object::Update(float dt)
 {
 	if (kbd.KeyIsPressed('Q'))
 	{
-		theta_x = wrap_angle(theta_x + dTheta * dt);
+		theta.x = wrap_angle(theta.x + dTheta * dt);
 	}
 	if (kbd.KeyIsPressed('W'))
 	{
-		theta_y = wrap_angle(theta_y + dTheta * dt);
+		theta.y = wrap_angle(theta.y + dTheta * dt);
 	}
 	if (kbd.KeyIsPressed('E'))
 	{
-		theta_z = wrap_angle(theta_z + dTheta * dt);
+		theta.z = wrap_angle(theta.z + dTheta * dt);
 	}
 	if (kbd.KeyIsPressed('A'))
 	{
-		theta_x = wrap_angle(theta_x - dTheta * dt);
+		theta.x = wrap_angle(theta.x - dTheta * dt);
 	}
 	if (kbd.KeyIsPressed('S'))
 	{
-		theta_y = wrap_angle(theta_y - dTheta * dt);
+		theta.y = wrap_angle(theta.y - dTheta * dt);
 	}
 	if (kbd.KeyIsPressed('D'))
 	{
-		theta_z = wrap_angle(theta_z - dTheta * dt);
+		theta.z = wrap_angle(theta.z - dTheta * dt);
 	}
 	if (kbd.KeyIsPressed('R'))
 	{
-		offset_z += 2.0f * dt;
+		pos.z += 2.0f * dt;
 	}
 	if (kbd.KeyIsPressed('F'))
 	{
-		offset_z -= 2.0f * dt;
+		pos.z -= 2.0f * dt;
 	}
 }
 
-void Object::DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst)
+void Object::DrawTextureless(Graphics& gfx, PerspectiveScreenTransformer& pst)
 {
 	//Get Tri's
 	auto triangles = GetTriangles();
@@ -66,7 +66,7 @@ void Object::DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst)
 	}
 }
 
-void Object::DrawTextured(Graphics& gfx, PubeScreenTransformer& pst)
+void Object::DrawTextured(Graphics& gfx, PerspectiveScreenTransformer& pst)
 {
 	//Get Tri's
 	auto triangles = GetTriangles();
@@ -91,7 +91,7 @@ void Object::DrawTextured(Graphics& gfx, PubeScreenTransformer& pst)
 				triangles.verts[triangles.indices[i * 3]],
 				triangles.verts[triangles.indices[i * 3 + 1]],
 				triangles.verts[triangles.indices[i * 3 + 2]],
-				texture);
+				model.texture);
 		}
 	}
 }
@@ -100,14 +100,14 @@ void Object::TransformVerts(IndexedTriangleList& triangles)
 {
 	//Set Rot
 	const Mat3 rot =
-		Mat3::RotationX(theta_x) *
-		Mat3::RotationY(theta_y) *
-		Mat3::RotationZ(theta_z);
+		Mat3::RotationX(theta.x) *
+		Mat3::RotationY(theta.y) *
+		Mat3::RotationZ(theta.z);
 	//Apply Rot + Offset
 	for (auto& v : triangles.verts)
 	{
 		v.pos *= rot;
-		v.pos += { 0.0f, 0.0f, offset_z };
+		v.pos += pos;
 	}
 }
 

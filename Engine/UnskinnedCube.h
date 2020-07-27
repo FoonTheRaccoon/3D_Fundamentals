@@ -22,9 +22,9 @@ public:
 			}
 		};
 	}
-	static std::vector<TexVertex> MakeUnskinedCube(float size)
+	static std::vector<Vertex> MakeUnskinedCube(float size)
 	{
-		std::vector<TexVertex> tmp_model;
+		std::vector<Vertex> tmp_model;
 		tmp_model.reserve(8);
 		const float side = size / 2.0f;
 		tmp_model.emplace_back(Vec3{ -side, -side, -side });

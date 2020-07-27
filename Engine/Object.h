@@ -1,33 +1,37 @@
 #pragma once
-#include "TexVertex.h"
 #include "MainWindow.h"
 #include "Graphics.h"
-#include "PubeScreenTransformer.h"
+#include "PerspectiveScreenTransformer.h"
 #include "IndexedLineList.h"
 #include "IndexedTriangleList.h"
+#include "Model.h"
 
 class Object
 {
 public:
-	Object(Keyboard& kbd, Mouse& mouse, std::vector<TexVertex> model, Surface texture = Surface::DefaultSurface())
-		: kbd(kbd), mouse(mouse), model(std::move(model)), texture(std::move(texture))
+	Object(Keyboard& kbd, Mouse& mouse, std::vector<Vertex> verts, Surface texture = Surface::DefaultSurface())
+		: kbd(kbd), mouse(mouse), model(std::move(verts),std::move(texture))
 	{}
 	void Update(float dt);
-	void DrawTextureless(Graphics& gfx, PubeScreenTransformer& pst);
-	void DrawTextured(Graphics& gfx, PubeScreenTransformer& pst);
-protected:
+	void DrawTextureless(Graphics& gfx, PerspectiveScreenTransformer& pst);
+	void DrawTextured(Graphics& gfx, PerspectiveScreenTransformer& pst);
 	void TransformVerts(IndexedTriangleList& triangles);
 	void SetCullFlags(IndexedTriangleList& triangles);
 	virtual IndexedTriangleList GetTriangles() const = 0;
+	const Vec3& GetTheta() const
+	{
+		return theta;
+	}
+	const Vec3& GetPos() const
+	{
+		return pos;
+	}
 protected:
 	static constexpr float dTheta = PI;
-	float offset_z = 2.0f;
-	float theta_x = 0.0f;
-	float theta_y = 0.0f;
-	float theta_z = 0.0f;
-	std::vector<TexVertex> model;
+	Vec3 pos = { 0.0f ,0.0f ,2.0f };
+	Vec3 theta = { 0.0f ,0.0f ,0.0f };
+	Model model;
 	//Refs
-	Surface texture;
 	Keyboard& kbd;
 	Mouse& mouse;
 	//Color Wheel

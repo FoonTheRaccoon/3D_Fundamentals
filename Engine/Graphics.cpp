@@ -432,12 +432,12 @@ void Graphics::DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Colo
 
 }
 
-void Graphics::DrawTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
+void Graphics::DrawTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
 {
 	//Ptr creation for swaps.
-	const TexVertex* p0 = &v0;
-	const TexVertex* p1 = &v1;
-	const TexVertex* p2 = &v2;
+	const Vertex* p0 = &v0;
+	const Vertex* p1 = &v1;
+	const Vertex* p2 = &v2;
 
 	//Sort points by y.
 	if (p1->pos.y < p0->pos.y) { std::swap(p1, p0); };
@@ -462,7 +462,7 @@ void Graphics::DrawTriangleTex(const TexVertex& v0, const TexVertex& v1, const T
 		//Calculate mid point ratio within top and bottom points
 		const float alpha = (p1->pos.y - p0->pos.y) / (p2->pos.y - p0->pos.y);
 
-		const TexVertex mid = p0->InterpolateTo(*p2, alpha);
+		const Vertex mid = p0->InterpolateTo(*p2, alpha);
 
 		if (mid.pos.x < p1->pos.x) // Major Left
 		{
@@ -535,34 +535,34 @@ void Graphics::DrawFlatTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, 
 	}
 }
 
-void Graphics::DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
+void Graphics::DrawFlatTopTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
 {
 	//v0 top left, v1 top right, v2 bottom point
-	TexVertex R_line = v1;
+	Vertex R_line = v1;
 
 	const float alpha = (v2.pos.y - v0.pos.y);
 
-	const TexVertex dL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
-	const TexVertex dR = (v2 - v1) / alpha; //Same but for right.
+	const Vertex dL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const Vertex dR = (v2 - v1) / alpha; //Same but for right.
 
 	DrawFlatTriangleTex(v0, v1, v2, texture, dL, dR, R_line);
 }
 
-void Graphics::DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture)
+void Graphics::DrawFlatBottomTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
 {
 	//v0 top point, v1 bottom left, v2 bottom right
 	//Left line is the same formula for both triangles
-	TexVertex R_line = v0;
+	Vertex R_line = v0;
 
 	const float alpha = (v2.pos.y - v0.pos.y);
 
-	const TexVertex dL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
-	const TexVertex dR = (v2 - v0) / alpha; //Same but for right.
+	const Vertex dL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const Vertex dR = (v2 - v0) / alpha; //Same but for right.
 	
 	DrawFlatTriangleTex(v0, v1, v2, texture, dL, dR, R_line);
 }
 
-void Graphics::DrawFlatTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture, const TexVertex& dL, const TexVertex& dR, TexVertex& R_line)
+void Graphics::DrawFlatTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line)
 {
 	//Set Texture Bounds
 	const float tex_width = float(texture.GetWidth());
@@ -571,7 +571,7 @@ void Graphics::DrawFlatTriangleTex(const TexVertex& v0, const TexVertex& v1, con
 	const float tex_clamp_y = tex_height - 1.0f;
 
 	//Add Right Side Line
-	TexVertex L_line = v0;
+	Vertex L_line = v0;
 
 	//Set YBounds
 	const int yStart = (int)ceilf(v0.pos.y - 0.5f);

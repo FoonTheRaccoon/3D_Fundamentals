@@ -11,7 +11,7 @@ public:
 	IndexedTriangleList GetTriangles() const override
 	{
 		return{
-			model,{
+			model.verts,{
 				0,2,1,		2,3,1,
 				4,8,5,		5,8,9,
 				2,6,3,		3,6,7,
@@ -21,9 +21,9 @@ public:
 			}
 		};
 	}
-	static std::vector<TexVertex> MakeDiceModel(float size)
+	static std::vector<Vertex> MakeDiceModel(float size)
 	{
-		std::vector<TexVertex> tmp_model;
+		std::vector<Vertex> tmp_model;
 		tmp_model.reserve(14);
 		const float side = size / 2.0f;
 

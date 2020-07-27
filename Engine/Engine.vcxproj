@@ -142,6 +142,8 @@
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="DiceModel.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Pipeline.h" />
     <ClInclude Include="UnskinnedCube.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="Game.h" />
@@ -155,11 +157,11 @@
     <ClInclude Include="Mat3.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="PubeScreenTransformer.h" />
+    <ClInclude Include="PerspectiveScreenTransformer.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Surface.h" />
-    <ClInclude Include="TexVertex.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="Vec2.h" />
     <ClInclude Include="Vec3.h" />
   </ItemGroup>
@@ -173,6 +175,7 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Surface.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -3,11 +3,11 @@
 #include <vector>
 #include "Vec3.h"
 #include <assert.h>
-#include "TexVertex.h"
+#include "Vertex.h"
 
 struct IndexedTriangleList
 {
-	IndexedTriangleList(std::vector<TexVertex> verts, std::vector<size_t> indices_in)
+	IndexedTriangleList(std::vector<Vertex> verts, std::vector<size_t> indices_in)
 		:
 		verts(std::move(verts)),
 		indices(std::move(indices_in))
@@ -15,7 +15,7 @@ struct IndexedTriangleList
 		assert(indices.size() % 3 == 0);
 		cullFlags.resize(indices.size() / 3, false);
 	}
-	std::vector<TexVertex> verts;
+	std::vector<Vertex> verts;
 	std::vector<size_t> indices;
-	std::vector<bool> cullFlags;
+	
 };

@@ -49,6 +49,6 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {	
 	//cube.DrawTextureless(gfx, pst);
-	//die.DrawTextured(gfx, pst);
-	die.DrawTextureless(gfx, pst);
+	die.DrawTextured(gfx, pst);
+	//die.DrawTextureless(gfx, pst);
 }

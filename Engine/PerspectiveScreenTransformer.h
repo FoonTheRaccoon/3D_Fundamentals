@@ -2,10 +2,10 @@
 #include "Vec3.h"
 #include "Graphics.h"
 
-class PubeScreenTransformer
+class PerspectiveScreenTransformer
 {
 public:
-	PubeScreenTransformer()
+	PerspectiveScreenTransformer()
 		:
 		xFactor( float( Graphics::ScreenWidth ) / 2.0f ),
 		yFactor( float( Graphics::ScreenHeight ) / 2.0f )

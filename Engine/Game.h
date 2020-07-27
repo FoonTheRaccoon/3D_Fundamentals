@@ -21,7 +21,7 @@
 #pragma once
 
 #include "Graphics.h"
-#include "PubeScreenTransformer.h"
+#include "PerspectiveScreenTransformer.h"
 #include "UnskinnedCube.h"
 #include "DiceModel.h"
 
@@ -43,7 +43,6 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	PubeScreenTransformer pst;
 	UnskinnedCube cube;
 	DiceModel die;
 	/********************************/

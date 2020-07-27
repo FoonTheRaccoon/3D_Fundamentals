@@ -26,7 +26,7 @@
 #include "Surface.h"
 #include "Colors.h"
 #include "Vec2.h"
-#include "TexVertex.h"
+#include "Vertex.h"
 
 #define CHILI_GFX_EXCEPTION( hr,note ) Graphics::Exception( hr,note,_CRT_WIDE(__FILE__),__LINE__ )
 
@@ -71,7 +71,7 @@ public:
 		sysBuffer.PutPixel( x,y,c );
 	}
 	void DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
-	void DrawTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture);
+	void DrawTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
 	void SimpleSurfaceDraw(Vec2& pos, Surface& surface);
 	~Graphics();
 private:
@@ -80,9 +80,9 @@ private:
 	void DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
 	void DrawFlatTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c, const Vec2& dL, const Vec2& dR, Vec2& R_line);
 	//With Texture
-	void DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture);
-	void DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture);
-	void DrawFlatTriangleTex(const TexVertex& v0, const TexVertex& v1, const TexVertex& v2, Surface& texture, const TexVertex& dL, const TexVertex& dR, TexVertex& R_line);
+	void DrawFlatTopTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
+	void DrawFlatBottomTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
+	void DrawFlatTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
 private:
 	GDIPlusManager										gdipMan;
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;
