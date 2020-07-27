@@ -544,33 +544,33 @@ void Graphics::DrawFlatTopTriangleTex(const TexVertex& v0, const TexVertex& v1, 
 	const float tex_clamp_x = tex_width - 1.0f;
 	const float tex_clamp_y = tex_height - 1.0f;
 
+	Vec2 L_Tex_line = v0.texCor;
+	Vec2 R_Tex_line = v1.texCor;
+
 	const float alpha = (v2.pos.y - v0.pos.y);
 
-	const float L_x_run = (v2.pos.x - v0.pos.x) / alpha; //Change in x per y (inverse slope) of left line.
-	const float R_x_run = (v2.pos.x - v1.pos.x) / alpha; //Same but for right.
-
-	Vec2 colorLeft = v2.texCor - v0.texCor;
-	Vec2 colorIncr = colorLeft / alpha;
-
-	float TexXrange = v1.texCor.x - v0.texCor.x;
+	const TexVertex dvL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const TexVertex dvR = (v2 - v1) / alpha; //Same but for right.
 
 	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
 	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
 
-	for (int iy = yStart; iy < yEnd; ++iy, colorLeft += colorIncr)
+	for (int iy = yStart; iy < yEnd; ++iy, L_Tex_line += dvL.texCor, R_Tex_line += dvR.texCor)
 	{
-		const float L_x = L_x_run * (float(iy) + 0.5f - v0.pos.y) + v0.pos.x;
-		const float R_x = R_x_run * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
+		const float L_x = dvL.pos.x * (float(iy) + 0.5f - v0.pos.y) + v0.pos.x;
+		const float R_x = dvR.pos.x * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
 
 		const int xStart = (int)ceilf(L_x - 0.5f);
 		const int xEnd = (int)ceilf(R_x - 0.5f);
 
-		float C_x = colorLeft.x;
-		float c_incr = TexXrange / (xStart - xEnd);
+		const float steps = float(xEnd - xStart);
 
-		for (int ix = xStart; ix < xEnd; ++ix, C_x += c_incr)
+		Vec2 C = L_Tex_line;
+		Vec2 c_incr = (R_Tex_line - L_Tex_line) / steps;
+
+		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C_x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(colorLeft.y * tex_height, 0.0f, tex_clamp_y)));
+			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(C.y * tex_height, 0.0f, tex_clamp_y)));
 			//PutPixel(ix, iy, Colors::White);
 		}
 	}
@@ -583,34 +583,34 @@ void Graphics::DrawFlatBottomTriangleTex(const TexVertex& v0, const TexVertex& v
 	const float tex_height = float(texture.GetHeight());
 	const float tex_clamp_x = tex_width - 1.0f;
 	const float tex_clamp_y = tex_height - 1.0f;
-	
-	const float alpha = (v1.pos.y - v0.pos.y);
 
-	const float L_x_run = (v1.pos.x - v0.pos.x) / alpha; //Change in x per y (inverse slope) of left line.
-	const float R_x_run = (v2.pos.x - v0.pos.x) / alpha; //Same but for right.
-	
-	const float L_c_run = (v1.texCor.x - v0.texCor.x) / alpha;
-	const float R_c_run = (v2.texCor.x - v0.texCor.x) / alpha;
-	
-	float TexXrange = v2.texCor.x - v1.texCor.x;
+	Vec2 L_Tex_line = v0.texCor;
+	Vec2 R_Tex_line = v0.texCor;
+
+	const float alpha = (v2.pos.y - v0.pos.y);
+
+	const TexVertex dvL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
+	const TexVertex dvR = (v2 - v0) / alpha; //Same but for right.
 	
 	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
 	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
 	
-	for (int iy = yStart; iy < yEnd; ++iy, colorLeft += colorIncr)
+	for (int iy = yStart; iy < yEnd; ++iy, L_Tex_line += dvL.texCor, R_Tex_line += dvR.texCor)
 	{
-		const float L_x = L_x_run * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
-		const float R_x = R_x_run * (float(iy) + 0.5f - v2.pos.y) + v2.pos.x;
+		const float L_x = dvL.pos.x * (float(iy) + 0.5f - v1.pos.y) + v1.pos.x;
+		const float R_x = dvR.pos.x * (float(iy) + 0.5f - v2.pos.y) + v2.pos.x;
 	
 		const int xStart = (int)ceilf(L_x - 0.5f);
 		const int xEnd = (int)ceilf(R_x - 0.5f);
 	
-		float C_x = colorLeft.x;
-		float c_incr = TexXrange / (xStart - xEnd);
-	
-		for (int ix = xStart; ix < xEnd; ++ix, C_x += c_incr)
+		const float steps = float(xEnd - xStart);
+
+		Vec2 C = L_Tex_line;
+		Vec2 c_incr = (R_Tex_line - L_Tex_line) / steps;
+		
+		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C_x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(colorLeft.y * tex_height, 0.0f, tex_clamp_y)));
+			PutPixel(ix, iy, texture.GetPixel((int)std::clamp(C.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(C.y * tex_height, 0.0f, tex_clamp_y)));
 			//PutPixel(ix, iy, Colors::White);
 		}
 	}
