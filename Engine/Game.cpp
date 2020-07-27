@@ -26,9 +26,10 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	cube(wnd.kbd, wnd.mouse, 1.0f ),
+	renderer(gfx),
 	die(wnd.kbd, wnd.mouse, 1.0f)
 {
+	renderer.AddObject(die);
 }
 
 void Game::Go()
@@ -42,13 +43,10 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = 1.0f / 60.0f;
-	//cube.Update(dt);
 	die.Update(dt);
 }
 
 void Game::ComposeFrame()
 {	
-	//cube.DrawTextureless(gfx, pst);
-	die.DrawTextured(gfx, pst);
-	//die.DrawTextureless(gfx, pst);
+	renderer.Update();
 }

@@ -13,7 +13,6 @@ struct IndexedTriangleList
 		indices(std::move(indices_in))
 	{
 		assert(indices.size() % 3 == 0);
-		cullFlags.resize(indices.size() / 3, false);
 	}
 	std::vector<Vertex> verts;
 	std::vector<size_t> indices;

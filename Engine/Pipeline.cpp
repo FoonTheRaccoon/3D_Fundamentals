@@ -4,13 +4,15 @@ void Pipeline::Update()
 {
 	for (auto& obj : objs)
 	{
-		auto triangles = obj.GetTriangles();
-		VertexTransformer(obj.GetTheta(), obj.GetPos(), triangles);
-
+		auto triangles = obj.second;
+		VertexTransformer(obj.first.GetTheta(), obj.first.GetPos(), triangles);
+		TriangleAssembler(triangles);
+		PerspecScreenTransform(triangles);
+		TriangleRasterizer(triangles, obj.first.GetTexture());
 	}
 }
 
-void Pipeline::VertexTransformer(const Vec3& theta, const Vec3& pos, IndexedTriangleList& triangles)
+void Pipeline::VertexTransformer(const Vec3& theta, const Vec3& pos, std::vector<Triangle>& triangles)
 {
 	//Set Rot
 	const Mat3 rot =
@@ -18,29 +20,43 @@ void Pipeline::VertexTransformer(const Vec3& theta, const Vec3& pos, IndexedTria
 		Mat3::RotationY(theta.y) *
 		Mat3::RotationZ(theta.z);
 	//Apply Rot + Offset
-	for (auto& v : triangles.verts)
+	for (auto& tri : triangles)
 	{
-		v.pos *= rot;
-		v.pos += pos;
+		tri.v0.pos *= rot;
+		tri.v1.pos *= rot;
+		tri.v2.pos *= rot;
+		tri.v0.pos += pos;
+		tri.v1.pos += pos;
+		tri.v2.pos += pos;
 	}
 }
 
-void Pipeline::TriangleAssembler(IndexedTriangleList& triangles)
+void Pipeline::TriangleAssembler(std::vector<Triangle>& triangles)
 {
 	//Apply back face culling flags
-	for (int i = 0; i < (triangles.indices.size() / 3); ++i)
+	for (auto& tri : triangles)
 	{
-		const Vec3& v0 = triangles.verts[triangles.indices[i * 3]].pos;
-		const Vec3& v1 = triangles.verts[triangles.indices[i * 3 + 1]].pos;
-		const Vec3& v2 = triangles.verts[triangles.indices[i * 3 + 2]].pos;
-		triangles.cullFlags[i] = (v1 - v0).X(v2 - v0) * v0 >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
+		tri.cullFlag = (tri.v1.pos - tri.v0.pos).X(tri.v2.pos - tri.v0.pos) * tri.v0.pos >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
+	}
+	
+	triangles.erase(std::remove_if(triangles.begin(), triangles.end(), [](Triangle& tri) {return tri.cullFlag; }), triangles.end());
+
+}
+
+void Pipeline::PerspecScreenTransform(std::vector<Triangle>& triangles)
+{
+	for (auto& tri : triangles)
+	{
+		pst.Transform(tri.v0.pos);
+		pst.Transform(tri.v1.pos);
+		pst.Transform(tri.v2.pos);
 	}
 }
 
-void Pipeline::PerspecScreenTransform()
+void Pipeline::TriangleRasterizer(std::vector<Triangle>& triangles, Surface& texture)
 {
-}
-
-void Pipeline::TriangleRasterizer()
-{
+	for (auto& tri : triangles)
+	{
+		gfx.DrawTriangleTex(tri.v0, tri.v1, tri.v2, texture);
+	}
 }

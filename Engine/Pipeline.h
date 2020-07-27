@@ -2,6 +2,7 @@
 #include "Object.h"
 #include "Graphics.h"
 #include "PerspectiveScreenTransformer.h"
+#include "Triangle.h"
 
 class Pipeline
 {
@@ -11,18 +12,17 @@ public:
 	{}
 	void AddObject(Object& obj)
 	{
-		objs.emplace_back(obj);
+		objs.emplace_back(obj, Triangle::MakeTriangleList(obj.GetTriangles()));
 	}
 	void Update();
-	void VertexTransformer(const Vec3& theta, const Vec3& pos, IndexedTriangleList& triangles);
-	void TriangleAssembler(IndexedTriangleList& triangles);
-	void PerspecScreenTransform();
-	void TriangleRasterizer();
-
 private:
-	std::vector<Object&> objs;
+	void VertexTransformer(const Vec3& theta, const Vec3& pos, std::vector<Triangle>& triangles);
+	void TriangleAssembler(std::vector<Triangle>& triangles);
+	void PerspecScreenTransform(std::vector<Triangle>& triangles);
+	void TriangleRasterizer(std::vector<Triangle>& triangles, Surface& texture);
+private:
+	std::vector<std::pair<Object&,const std::vector<Triangle>>> objs;
 	Graphics& gfx;
 	PerspectiveScreenTransformer pst;
-
 };
 

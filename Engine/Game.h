@@ -22,8 +22,8 @@
 
 #include "Graphics.h"
 #include "PerspectiveScreenTransformer.h"
-#include "UnskinnedCube.h"
 #include "DiceModel.h"
+#include "Pipeline.h"
 
 class Game
 {
@@ -43,7 +43,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	UnskinnedCube cube;
 	DiceModel die;
+	Pipeline renderer;
 	/********************************/
 };

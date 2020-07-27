@@ -59,5 +59,5 @@ struct Vertex
 	}
 	Vec3 pos;
 	Vec2 texCor;
-	bool cullFlag = false;
+	
 };
