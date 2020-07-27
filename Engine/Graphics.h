@@ -70,19 +70,10 @@ public:
 	{
 		sysBuffer.PutPixel( x,y,c );
 	}
-	void DrawTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
-	void DrawTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
 	void SimpleSurfaceDraw(Vec2& pos, Surface& surface);
 	~Graphics();
 private:
-	//Without Texture
-	void DrawFlatTopTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
-	void DrawFlatBottomTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c);
-	void DrawFlatTriangle(const Vec2& v0, const Vec2& v1, const Vec2& v2, Color c, const Vec2& dL, const Vec2& dR, Vec2& R_line);
-	//With Texture
-	void DrawFlatTopTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
-	void DrawFlatBottomTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
-	void DrawFlatTriangleTex(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
+	
 private:
 	GDIPlusManager										gdipMan;
 	Microsoft::WRL::ComPtr<IDXGISwapChain>				pSwapChain;

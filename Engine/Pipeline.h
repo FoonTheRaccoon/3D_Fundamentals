@@ -20,6 +20,11 @@ private:
 	void TriangleAssembler(std::vector<Triangle>& triangles);
 	void PerspecScreenTransform(std::vector<Triangle>& triangles);
 	void TriangleRasterizer(std::vector<Triangle>& triangles, Surface& texture);
+	//Triangle Rasterizer Functions
+	void DrawTriangle(const Triangle& tri, Surface& texture);
+	void DrawFlatTopTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
+	void DrawFlatBottomTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
+	void DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
 private:
 	std::vector<std::pair<Object&,const std::vector<Triangle>>> objs;
 	Graphics& gfx;
