@@ -3,16 +3,22 @@
 #include "Graphics.h"
 #include "PerspectiveScreenTransformer.h"
 #include "Triangle.h"
+#include "PixelShader.h"
 
 class Pipeline
 {
 public:
 	Pipeline(Graphics& gfx)
-		: gfx(gfx)
+		: gfx(gfx), ps(&Effect::Default)
 	{}
 	void AddObject(Object* obj)
 	{
 		objs.emplace_back(obj);
+	}
+	//ShaderChanger
+	void SetPixelShader(PixelShader* ps_in)
+	{
+		ps = ps_in;
 	}
 	void Update();
 private:
@@ -23,15 +29,16 @@ private:
 	void PerspecScreenTransform(Triangle& tri);
 	//Pipeline helper Functions
 	Mat3 GetRot(const Vec3& theta);
-
 	//Triangle Rasterizer Functions
 	void TriangleRasterizer(const Triangle& tri, Surface& texture);
 	void DrawFlatTopTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
 	void DrawFlatBottomTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
 	void DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
+	
 private:
 	std::vector<Object*> objs;
 	Graphics& gfx;
 	PerspectiveScreenTransformer pst;
+	PixelShader* ps;
 };
 

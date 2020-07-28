@@ -44,6 +44,23 @@ void Game::UpdateModel()
 {
 	const float dt = 1.0f / 60.0f;
 	die.Update(dt);
+
+	if (wnd.kbd.KeyIsPressed(VK_UP))
+	{
+		renderer.SetPixelShader(&Effect::Default);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_DOWN))
+	{
+		renderer.SetPixelShader(&Effect::InvertColors);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_LEFT))
+	{
+		renderer.SetPixelShader(&Effect::BlackAndWhite);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+	{
+		renderer.SetPixelShader(&Effect::SolidWhite);
+	}
 }
 
 void Game::ComposeFrame()

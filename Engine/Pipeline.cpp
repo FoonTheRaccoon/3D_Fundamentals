@@ -179,7 +179,7 @@ void Pipeline::DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex
 
 		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			gfx.PutPixel(ix, iy, texture.GetPixel((int)std::fmod(C.x * tex_width, tex_clamp_x), (int)std::fmod(C.y * tex_height, tex_clamp_y)));
+			gfx.PutPixel(ix, iy, ps->Effect(texture.GetPixel((int)std::fmod(C.x * tex_width, tex_clamp_x), (int)std::fmod(C.y * tex_height, tex_clamp_y))));
 		}
 	}
 }
