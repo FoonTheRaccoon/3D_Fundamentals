@@ -62,9 +62,9 @@ void Pipeline::Cull(std::vector<Triangle>& triangles)
 void Pipeline::PerspecScreenTransform(Triangle& tri)
 {
 	//Transform to screen perpective.
-	pst.Transform(tri.v0.pos);
-	pst.Transform(tri.v1.pos);
-	pst.Transform(tri.v2.pos);
+	pst.Transform(tri.v0);
+	pst.Transform(tri.v1);
+	pst.Transform(tri.v2);
 }
 
 
@@ -158,7 +158,7 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 	const float tex_clamp_x = tex_width - 1.0f;
 	const float tex_clamp_y = tex_height - 1.0f;
 
-	//Add Right Side Line
+	//Add Left Side Line
 	Vertex L_line = v0;
 
 	//Set YBounds
@@ -174,12 +174,13 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 		const int xStart = (int)ceilf(L_line.pos.x - 0.5f);
 		const int xEnd = (int)ceilf(R_line.pos.x - 0.5f);
 
-		const Vec2 c_incr = (R_line.texCor - L_line.texCor) / (R_line.pos.x - L_line.pos.x);
-		Vec2 C = L_line.texCor + c_incr * (float(xStart) + 0.5f - L_line.pos.x);
+		const Vertex c_incr = (R_line - L_line) / (R_line.pos.x - L_line.pos.x);
+		Vertex C = L_line + c_incr * (float(xStart) + 0.5f - L_line.pos.x);
 
 		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			const Color base_c = texture.GetPixel((int)std::fmod(C.x * tex_width, tex_clamp_x), (int)std::fmod(C.y * tex_height, tex_clamp_y));
+			const float z = 1.0f / C.pos.z;
+			const Color base_c = texture.GetPixel((int)std::fmod(C.texCor.x * z * tex_width, tex_clamp_x), (int)std::fmod(C.texCor.y * z * tex_height, tex_clamp_y));
 			gfx.PutPixel(ix, iy, ps->Effect(tri, base_c));
 		}
 	}
