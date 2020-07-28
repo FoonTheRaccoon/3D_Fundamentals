@@ -16,12 +16,16 @@ public:
 	}
 	void Update();
 private:
-	void VertexTransformer(const Vec3& theta, const Vec3& pos, std::vector<Triangle>& triangles);
-	void TriangleAssembler(std::vector<Triangle>& triangles);
-	void PerspecScreenTransform(std::vector<Triangle>& triangles);
-	void TriangleRasterizer(std::vector<Triangle>& triangles, Surface& texture);
+	//Main pipeline
+	void VertexTransformer(const Mat3& rot, const Vec3& pos, Triangle& tri);
+	void TriangleAssembler(Triangle& tri);
+	void Cull(std::vector<Triangle>& triangles);
+	void PerspecScreenTransform(Triangle& tri);
+	//Pipeline helper Functions
+	Mat3 GetRot(const Vec3& theta);
+
 	//Triangle Rasterizer Functions
-	void DrawTriangle(const Triangle& tri, Surface& texture);
+	void TriangleRasterizer(const Triangle& tri, Surface& texture);
 	void DrawFlatTopTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
 	void DrawFlatBottomTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
 	void DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);

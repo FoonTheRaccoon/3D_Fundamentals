@@ -6,64 +6,73 @@ void Pipeline::Update()
 {
 	for (auto& obj : objs)
 	{
+		//Init Tri list.
 		auto triangles = obj.second;
-		VertexTransformer(obj.first.GetTheta(), obj.first.GetPos(), triangles);
-		TriangleAssembler(triangles);
-		PerspecScreenTransform(triangles);
-		TriangleRasterizer(triangles, obj.first.GetTexture());
+
+		//Set Rotation matrix.
+		const Mat3 rot = GetRot(obj.first.GetTheta());
+
+		//Apply rotation and set cull flags.
+		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
+			{
+				VertexTransformer(rot, obj.first.GetPos(), tri);
+				TriangleAssembler(tri);
+			});
+
+		//Cull the tris (Duh)
+		Cull(triangles);
+
+		//Transform and draw the Tris
+		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
+			{
+				PerspecScreenTransform(tri);
+				TriangleRasterizer(tri, obj.first.GetTexture());
+			});
 	}
 }
 
-void Pipeline::VertexTransformer(const Vec3& theta, const Vec3& pos, std::vector<Triangle>& triangles)
+void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 {
-	//Set Rot
-	const Mat3 rot =
-		Mat3::RotationX(theta.x) *
-		Mat3::RotationY(theta.y) *
-		Mat3::RotationZ(theta.z);
 	//Apply Rot + Offset
-	for (auto& tri : triangles)
-	{
-		tri.v0.pos *= rot;
-		tri.v1.pos *= rot;
-		tri.v2.pos *= rot;
-		tri.v0.pos += pos;
-		tri.v1.pos += pos;
-		tri.v2.pos += pos;
-	}
+	tri.v0.pos *= rot;
+	tri.v1.pos *= rot;
+	tri.v2.pos *= rot;
+	tri.v0.pos += pos;
+	tri.v1.pos += pos;
+	tri.v2.pos += pos;
 }
 
-void Pipeline::TriangleAssembler(std::vector<Triangle>& triangles)
+void Pipeline::TriangleAssembler(Triangle& tri)
 {
 	//Apply back face culling flags
-	for (auto& tri : triangles)
-	{
-		tri.cullFlag = (tri.v1.pos - tri.v0.pos).X(tri.v2.pos - tri.v0.pos) * tri.v0.pos >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
-	}
-	
-	triangles.erase(std::remove_if(std::execution::par,triangles.begin(), triangles.end(), [](Triangle& tri) {return tri.cullFlag; }), triangles.end());
-
+	tri.cullFlag = (tri.v1.pos - tri.v0.pos).X(tri.v2.pos - tri.v0.pos) * tri.v0.pos >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
 }
 
-void Pipeline::PerspecScreenTransform(std::vector<Triangle>& triangles)
+void Pipeline::Cull(std::vector<Triangle>& triangles)
 {
-	for (auto& tri : triangles)
-	{
-		pst.Transform(tri.v0.pos);
-		pst.Transform(tri.v1.pos);
-		pst.Transform(tri.v2.pos);
-	}
+	//Check for cull flags and erase
+	triangles.erase(std::remove_if(std::execution::par, triangles.begin(), triangles.end(), [](Triangle& tri) {return tri.cullFlag; }), triangles.end());
 }
 
-void Pipeline::TriangleRasterizer(std::vector<Triangle>& triangles, Surface& texture)
+void Pipeline::PerspecScreenTransform(Triangle& tri)
 {
-	for (auto& tri : triangles)
-	{
-		DrawTriangle(tri, texture);
-	}
+	//Transform to screen perpective.
+	pst.Transform(tri.v0.pos);
+	pst.Transform(tri.v1.pos);
+	pst.Transform(tri.v2.pos);
 }
 
-void Pipeline::DrawTriangle(const Triangle& tri, Surface& texture)
+
+Mat3 Pipeline::GetRot(const Vec3& theta)
+{
+	//Set Rot
+	return Mat3(
+		Mat3::RotationX(theta.x) *
+		Mat3::RotationY(theta.y) *
+		Mat3::RotationZ(theta.z));
+}
+
+void Pipeline::TriangleRasterizer(const Triangle& tri, Surface& texture)
 {
 	//Ptr creation for swaps.
 	const Vertex* p0 = &tri.v0;
