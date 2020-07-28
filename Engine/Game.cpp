@@ -27,9 +27,11 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	renderer(gfx),
-	die(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f))
+	die1(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f)),
+	die2(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f))
 {
-	renderer.AddObject(&die);
+	renderer.AddObject(&die1);
+	renderer.AddObject(&die2);
 }
 
 void Game::Go()
@@ -43,7 +45,8 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = 1.0f / 60.0f;
-	die.Update(dt);
+	die1.Update(dt);
+	die2.Update(-dt);
 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{

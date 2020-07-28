@@ -4,6 +4,9 @@
 
 void Pipeline::Update()
 {
+	//Set the ZBuffer for the frame
+	zbuffer.Clear();
+
 	for (auto& obj : objs)
 	{
 		//Init Tri list.
@@ -180,8 +183,11 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
 			const float z = 1.0f / C.pos.z;
-			const Color base_c = texture.GetPixel((int)std::fmod(C.texCor.x * z * tex_width, tex_clamp_x), (int)std::fmod(C.texCor.y * z * tex_height, tex_clamp_y));
-			gfx.PutPixel(ix, iy, ps->Effect(tri, base_c));
+			if (zbuffer.TestAndSet(ix, iy, z))
+			{
+				const Color base_c = texture.GetPixel((int)std::fmod(C.texCor.x * z * tex_width, tex_clamp_x), (int)std::fmod(C.texCor.y * z * tex_height, tex_clamp_y));
+				gfx.PutPixel(ix, iy, ps->Effect(tri, base_c));
+			}
 		}
 	}
 }

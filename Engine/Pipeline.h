@@ -4,12 +4,16 @@
 #include "PerspectiveScreenTransformer.h"
 #include "Triangle.h"
 #include "PixelShader.h"
+#include "ZBuffer.h"
 
 class Pipeline
 {
 public:
 	Pipeline(Graphics& gfx)
-		: gfx(gfx), ps(&Effect::Default)
+		: 
+		gfx(gfx), 
+		ps(&Effect::Default), 
+		zbuffer(Graphics::ScreenWidth, Graphics::ScreenHeight)
 	{}
 	void AddObject(Object* obj)
 	{
@@ -40,5 +44,6 @@ private:
 	Graphics& gfx;
 	PerspectiveScreenTransformer pst;
 	PixelShader* ps;
+	ZBuffer zbuffer;
 };
 

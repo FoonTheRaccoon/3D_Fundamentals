@@ -45,7 +45,8 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Object die;
+	Object die1;
+	Object die2;
 	Pipeline renderer;
 	/********************************/
 };
