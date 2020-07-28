@@ -4,8 +4,8 @@
 
 struct Triangle
 {
-	Triangle(Vertex v0, Vertex v1, Vertex v2)
-		: v0(v0), v1(v1), v2(v2)
+	Triangle(Vertex v0, Vertex v1, Vertex v2, Color color)
+		: v0(v0), v1(v1), v2(v2), color(color)
 	{}
 	static std::vector<Triangle> MakeTriangleList(const std::vector<Vertex>& verts,const std::vector<size_t>& tri_indicies_list)
 	{
@@ -16,7 +16,8 @@ struct Triangle
 			tmp_list.emplace_back(
 				verts[tri_indicies_list[i * 3]],
 				verts[tri_indicies_list[i * 3 + 1]],
-				verts[tri_indicies_list[i * 3 + 2]]
+				verts[tri_indicies_list[i * 3 + 2]],
+				Colors::MakeRGB(rand() % 255, rand() % 255, rand() % 255)
 			);
 		}
 		return tmp_list;
@@ -24,5 +25,6 @@ struct Triangle
 	Vertex v0;
 	Vertex v1;
 	Vertex v2;
+	Color color;
 	bool cullFlag = false;
 };

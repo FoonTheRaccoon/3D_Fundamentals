@@ -59,7 +59,7 @@ void Game::UpdateModel()
 	}
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		renderer.SetPixelShader(&Effect::SolidWhite);
+		renderer.SetPixelShader(&Effect::ShowTriangles);
 	}
 }
 

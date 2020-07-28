@@ -31,9 +31,9 @@ private:
 	Mat3 GetRot(const Vec3& theta);
 	//Triangle Rasterizer Functions
 	void TriangleRasterizer(const Triangle& tri, Surface& texture);
-	void DrawFlatTopTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
-	void DrawFlatBottomTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
-	void DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
+	void DrawFlatTopTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
+	void DrawFlatBottomTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
+	void DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
 	
 private:
 	std::vector<Object*> objs;

@@ -1,21 +1,30 @@
 #pragma once
 #include "Colors.h"
+#include <cmath>
 
 class PixelShader
 {
 public:
-	virtual Color Effect (const Color& c)
+	virtual Color Effect (const Triangle& tri, const Color& c)
 	{
 		return c;
 	}
-	virtual void Cycle() {};
+};
+
+class Show_Triangles : public PixelShader
+{
+public:
+	Color Effect(const Triangle& tri, const Color& c) override
+	{
+		return tri.color;
+	}
 };
 
 
 class Solid_White : public PixelShader
 {
 public:
-	Color Effect(const Color& c) override
+	Color Effect(const Triangle& tri, const Color& c) override
 	{
 		return Colors::White;
 	}
@@ -24,7 +33,7 @@ public:
 class Black_White : public PixelShader
 {
 public:
-	Color Effect(const Color& c) override
+	Color Effect(const Triangle& tri, const Color& c) override
 	{
 		const unsigned int avg = (c.GetR() + c.GetG() + c.GetB()) / 3;
 
@@ -35,7 +44,7 @@ public:
 class Invert_Colors : public PixelShader
 {
 public:
-	Color Effect(const Color& c) override
+	Color Effect(const Triangle& tri, const Color& c) override
 	{
 		return Colors::MakeRGB(255 - c.GetR(), 255 - c.GetG(), 255 - c.GetB());
 	}
@@ -43,8 +52,9 @@ public:
 
 namespace Effect
 {
-	inline PixelShader Default;
-	inline Solid_White SolidWhite;
-	inline Black_White BlackAndWhite;
-	inline Invert_Colors InvertColors;
+	inline PixelShader		Default;
+	inline Show_Triangles	ShowTriangles;
+	inline Solid_White		SolidWhite;
+	inline Black_White		BlackAndWhite;
+	inline Invert_Colors	InvertColors;
 }

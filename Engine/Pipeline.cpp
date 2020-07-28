@@ -93,12 +93,12 @@ void Pipeline::TriangleRasterizer(const Triangle& tri, Surface& texture)
 	if (p0->pos.y == p1->pos.y) //Flat top check
 	{
 		if (p1->pos.x < p0->pos.x) { std::swap(p1, p0); };
-		DrawFlatTopTriangle(*p0, *p1, *p2, texture);
+		DrawFlatTopTriangle(tri, *p0, *p1, *p2, texture);
 	}
 	else if (p2->pos.y == p1->pos.y) //Flat bottom Check
 	{
 		if (p2->pos.x < p1->pos.x) { std::swap(p1, p2); };
-		DrawFlatBottomTriangle(*p0, *p1, *p2, texture);
+		DrawFlatBottomTriangle(tri, *p0, *p1, *p2, texture);
 	}
 	else //General Triangle
 	{
@@ -111,18 +111,18 @@ void Pipeline::TriangleRasterizer(const Triangle& tri, Surface& texture)
 
 		if (mid.pos.x < p1->pos.x) // Major Left
 		{
-			DrawFlatBottomTriangle(*p0, mid, *p1, texture);
-			DrawFlatTopTriangle(mid, *p1, *p2, texture);
+			DrawFlatBottomTriangle(tri, *p0, mid, *p1, texture);
+			DrawFlatTopTriangle(tri, mid, *p1, *p2, texture);
 		}
 		else //Major Right
 		{
-			DrawFlatBottomTriangle(*p0, *p1, mid, texture);
-			DrawFlatTopTriangle(*p1, mid, *p2, texture);
+			DrawFlatBottomTriangle(tri, *p0, *p1, mid, texture);
+			DrawFlatTopTriangle(tri, *p1, mid, *p2, texture);
 		}
 	}
 }
 
-void Pipeline::DrawFlatTopTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
+void Pipeline::DrawFlatTopTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
 {
 	//v0 top left, v1 top right, v2 bottom point
 
@@ -133,10 +133,10 @@ void Pipeline::DrawFlatTopTriangle(const Vertex& v0, const Vertex& v1, const Ver
 	const Vertex dL = (v2 - v0) / alpha; //Change in x per y (inverse slope) of left line.
 	const Vertex dR = (v2 - v1) / alpha; //Same but for right.
 
-	DrawFlatTriangle(v0, v1, v2, texture, dL, dR, R_line);
+	DrawFlatTriangle(tri, v0, v1, v2, texture, dL, dR, R_line);
 }
 
-void Pipeline::DrawFlatBottomTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
+void Pipeline::DrawFlatBottomTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture)
 {
 	//v0 top point, v1 bottom left, v2 bottom right
 	
@@ -147,12 +147,12 @@ void Pipeline::DrawFlatBottomTriangle(const Vertex& v0, const Vertex& v1, const 
 	const Vertex dL = (v1 - v0) / alpha; //Change in x per y (inverse slope) of left line.
 	const Vertex dR = (v2 - v0) / alpha; //Same but for right.
 
-	DrawFlatTriangle(v0, v1, v2, texture, dL, dR, R_line);
+	DrawFlatTriangle(tri, v0, v1, v2, texture, dL, dR, R_line);
 }
 
-void Pipeline::DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line)
+void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line)
 {
-	//Set Texture Bounds
+	//Set texture limits
 	const float tex_width = float(texture.GetWidth());
 	const float tex_height = float(texture.GetHeight());
 	const float tex_clamp_x = tex_width - 1.0f;
@@ -179,7 +179,8 @@ void Pipeline::DrawFlatTriangle(const Vertex& v0, const Vertex& v1, const Vertex
 
 		for (int ix = xStart; ix < xEnd; ++ix, C += c_incr)
 		{
-			gfx.PutPixel(ix, iy, ps->Effect(texture.GetPixel((int)std::fmod(C.x * tex_width, tex_clamp_x), (int)std::fmod(C.y * tex_height, tex_clamp_y))));
+			const Color base_c = texture.GetPixel((int)std::fmod(C.x * tex_width, tex_clamp_x), (int)std::fmod(C.y * tex_height, tex_clamp_y));
+			gfx.PutPixel(ix, iy, ps->Effect(tri, base_c));
 		}
 	}
 }
