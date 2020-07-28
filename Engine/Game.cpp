@@ -27,9 +27,9 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	renderer(gfx),
-	die(wnd.kbd, wnd.mouse, 1.0f)
+	die(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f))
 {
-	renderer.AddObject(die);
+	renderer.AddObject(&die);
 }
 
 void Game::Go()

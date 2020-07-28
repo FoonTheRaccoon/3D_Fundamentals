@@ -9,11 +9,14 @@
 class Object
 {
 public:
-	Object(Keyboard& kbd, Mouse& mouse, std::vector<Vertex> verts, Surface texture = Surface::DefaultSurface())
-		: kbd(kbd), mouse(mouse), model(std::move(verts),std::move(texture))
+	Object(Keyboard& kbd, Mouse& mouse, Model model)
+		: kbd(kbd), mouse(mouse), model(std::move(model))
 	{}
 	void Update(float dt);
-	virtual IndexedTriangleList GetTriangles() const = 0;
+	const std::vector<Triangle>& GetTriangles() const
+	{
+		return model.triangles;
+	}
 	const Vec3& GetTheta() const
 	{
 		return theta;

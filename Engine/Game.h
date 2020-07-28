@@ -23,6 +23,7 @@
 #include "Graphics.h"
 #include "PerspectiveScreenTransformer.h"
 #include "DiceModel.h"
+#include "Object.h"
 #include "Pipeline.h"
 
 class Game
@@ -43,7 +44,7 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	DiceModel die;
+	Object die;
 	Pipeline renderer;
 	/********************************/
 };

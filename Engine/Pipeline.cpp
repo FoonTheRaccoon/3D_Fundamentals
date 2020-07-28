@@ -7,15 +7,16 @@ void Pipeline::Update()
 	for (auto& obj : objs)
 	{
 		//Init Tri list.
-		auto triangles = obj.second;
+		static std::vector<Triangle> triangles;
+		triangles = obj->GetTriangles();
 
 		//Set Rotation matrix.
-		const Mat3 rot = GetRot(obj.first.GetTheta());
+		const Mat3 rot = GetRot(obj->GetTheta());
 
 		//Apply rotation and set cull flags.
 		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
 			{
-				VertexTransformer(rot, obj.first.GetPos(), tri);
+				VertexTransformer(rot, obj->GetPos(), tri);
 				TriangleAssembler(tri);
 			});
 
@@ -26,9 +27,13 @@ void Pipeline::Update()
 		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
 			{
 				PerspecScreenTransform(tri);
-				TriangleRasterizer(tri, obj.first.GetTexture());
+				TriangleRasterizer(tri, obj->GetTexture());
 			});
+
+		//Clear Cache
+		triangles.clear();
 	}
+	
 }
 
 void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
