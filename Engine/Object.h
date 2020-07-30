@@ -25,9 +25,9 @@ public:
 	{
 		return pos;
 	}
-	Surface& GetTexture()
+	Surface* GetTexturePtr()
 	{
-		return model.texture;
+		return &model.texture;
 	}
 protected:
 	static constexpr float dTheta = PI;

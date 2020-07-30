@@ -7,9 +7,22 @@
 
 struct Vertex
 {
-	Vertex(Vec3 pos = {0.0f, 0.0f, 0.0f}, Vec2 texCor = { 0.0f, 0.0f })
-		: pos(pos), texCor(texCor)
+	Vertex(Vec3 pos = {0.0f, 0.0f, 0.0f}, Vec2 texCor = { 0.0f, 0.0f }, Vec3 color = { float(rand() % 250 + 2), float(rand() % 250 + 2), float(rand() % 250 + 2) })
+		: pos(pos), texCor(texCor), color(color)
 	{}
+	Vertex(const Vertex& other)
+		: pos(other.pos), texCor(other.texCor), color(other.color)
+	{}
+	Vertex(Vertex&& other)
+		: pos(std::move(other.pos)), texCor(std::move(other.texCor)), color(std::move(other.color))
+	{}
+	Vertex& operator=(const Vertex& rhs)
+	{
+		pos = rhs.pos;
+		texCor = rhs.texCor;
+		color = rhs.color;
+		return *this;
+	}
 	Vertex InterpolateTo(const Vertex& dest, float alpha) const
 	{
 		return{
@@ -21,6 +34,7 @@ struct Vertex
 	{
 		pos += rhs.pos;
 		texCor += rhs.texCor;
+		color += rhs.color;
 		return *this;
 	}
 	Vertex operator+(const Vertex& rhs) const
@@ -31,6 +45,7 @@ struct Vertex
 	{
 		pos -= rhs.pos;
 		texCor -= rhs.texCor;
+		color -= rhs.color;
 		return *this;
 	}
 	Vertex operator-(const Vertex& rhs) const
@@ -41,6 +56,7 @@ struct Vertex
 	{
 		pos *= rhs;
 		texCor *= rhs;
+		color *= rhs;
 		return *this;
 	}
 	Vertex operator*(float rhs) const
@@ -51,6 +67,7 @@ struct Vertex
 	{
 		pos /= rhs;
 		texCor /= rhs;
+		color /= rhs;
 		return *this;
 	}
 	Vertex operator/(float rhs) const
@@ -59,5 +76,5 @@ struct Vertex
 	}
 	Vec3 pos;
 	Vec2 texCor;
-	
+	Vec3 color;
 };

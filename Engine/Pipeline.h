@@ -12,7 +12,7 @@ public:
 	Pipeline(Graphics& gfx)
 		: 
 		gfx(gfx), 
-		ps(&Effect::Default), 
+		ps(&PixelShader::Default),
 		zbuffer(Graphics::ScreenWidth, Graphics::ScreenHeight)
 	{}
 	void AddObject(Object* obj)
@@ -20,7 +20,7 @@ public:
 		objs.emplace_back(obj);
 	}
 	//ShaderChanger
-	void SetPixelShader(PixelShader* ps_in)
+	void SetPixelShader(Pixel_Shader* ps_in)
 	{
 		ps = ps_in;
 	}
@@ -34,16 +34,16 @@ private:
 	//Pipeline helper Functions
 	Mat3 GetRot(const Vec3& theta);
 	//Triangle Rasterizer Functions
-	void TriangleRasterizer(const Triangle& tri, Surface& texture);
-	void DrawFlatTopTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
-	void DrawFlatBottomTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture);
-	void DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, Surface& texture, const Vertex& dL, const Vertex& dR, Vertex& R_line);
+	void TriangleRasterizer(const Triangle& tri);
+	void DrawFlatTopTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2);
+	void DrawFlatBottomTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2);
+	void DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& dL, const Vertex& dR, Vertex& R_line);
 	
 private:
 	std::vector<Object*> objs;
 	Graphics& gfx;
 	PerspectiveScreenTransformer pst;
-	PixelShader* ps;
+	Pixel_Shader* ps;
 	ZBuffer zbuffer;
 };
 

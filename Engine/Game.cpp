@@ -31,7 +31,7 @@ Game::Game( MainWindow& wnd )
 	die2(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f))
 {
 	renderer.AddObject(&die1);
-	renderer.AddObject(&die2);
+	//renderer.AddObject(&die2);
 }
 
 void Game::Go()
@@ -50,19 +50,19 @@ void Game::UpdateModel()
 
 	if (wnd.kbd.KeyIsPressed(VK_UP))
 	{
-		renderer.SetPixelShader(&Effect::Default);
+		renderer.SetPixelShader(&PixelShader::Default);
 	}
 	if (wnd.kbd.KeyIsPressed(VK_DOWN))
 	{
-		renderer.SetPixelShader(&Effect::InvertColors);
+		renderer.SetPixelShader(&PixelShader::InvertColors);
 	}
 	if (wnd.kbd.KeyIsPressed(VK_LEFT))
 	{
-		renderer.SetPixelShader(&Effect::BlackAndWhite);
+		renderer.SetPixelShader(&PixelShader::ShowVerticies);
 	}
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		renderer.SetPixelShader(&Effect::ShowTriangles);
+		renderer.SetPixelShader(&PixelShader::ShowTriangles);
 	}
 }
 

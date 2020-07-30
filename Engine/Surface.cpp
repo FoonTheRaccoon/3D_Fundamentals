@@ -55,7 +55,7 @@ Surface Surface::FromFile( const std::wstring & name )
 	unsigned int width = 0;
 	unsigned int height = 0;
 	unsigned int pitch = 0;
-	std::unique_ptr<Color[]> pBuffer = nullptr;
+	Color* pBuffer = nullptr;
 
 	{
 		Gdiplus::Bitmap bitmap( name.c_str() );
@@ -68,7 +68,7 @@ Surface Surface::FromFile( const std::wstring & name )
 
 		pitch = width = bitmap.GetWidth();
 		height = bitmap.GetHeight();
-		pBuffer = std::make_unique<Color[]>( width * height );
+		pBuffer = new Color[width * height];
 
 		for( unsigned int y = 0; y < height; y++ )
 		{
@@ -130,7 +130,7 @@ void Surface::Save( const std::wstring & filename ) const
 
 	CLSID bmpID;
 	GetEncoderClsid( L"image/bmp",&bmpID );
-	Gdiplus::Bitmap bitmap( width,height,pitch * sizeof( Color ),PixelFormat32bppARGB,(BYTE*)pBuffer.get() );
+	Gdiplus::Bitmap bitmap( width,height,pitch * sizeof( Color ),PixelFormat32bppARGB,(BYTE*)pBuffer );
 	if( bitmap.Save( filename.c_str(),&bmpID,nullptr ) != Gdiplus::Status::Ok )
 	{
 		std::wstringstream ss;
@@ -145,7 +145,7 @@ void Surface::Copy( const Surface & src )
 	assert( height == src.height );
 	if( pitch == src.pitch )
 	{
-		memcpy( pBuffer.get(),src.pBuffer.get(),pitch * height * sizeof( Color ) );
+		memcpy( pBuffer,src.pBuffer,pitch * height * sizeof( Color ) );
 	}
 	else
 	{

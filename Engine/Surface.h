@@ -42,7 +42,7 @@ public:
 public:
 	Surface( unsigned int width,unsigned int height,unsigned int pitch )
 		:
-		pBuffer( std::make_unique<Color[]>( pitch * height ) ),
+		pBuffer( new Color[pitch * height]),
 		width( width ),
 		height( height ),
 		pitch( pitch )
@@ -66,14 +66,18 @@ public:
 		pitch = donor.pitch;
 		pBuffer = std::move( donor.pBuffer );
 		donor.pBuffer = nullptr;
+		delete[] donor.pBuffer;
 		return *this;
 	}
 	Surface& operator=( const Surface& ) = delete;
 	~Surface()
-	{}
+	{
+		pBuffer = nullptr;
+		delete[] pBuffer;
+	}
 	void Clear( Color fillValue  )
 	{
-		memset( pBuffer.get(),fillValue.dword,pitch * height * sizeof( Color ) );
+		memset( pBuffer,fillValue.dword,pitch * height * sizeof( Color ) );
 	}
 	void Present( unsigned int dstPitch,BYTE* const pDst ) const
 	{
@@ -111,14 +115,6 @@ public:
 	{
 		return pitch;
 	}
-	Color* GetBufferPtr()
-	{
-		return pBuffer.get();
-	}
-	const Color* GetBufferPtrConst() const
-	{
-		return pBuffer.get();
-	}
 	static Surface FromFile( const std::wstring& name );
 	void Save( const std::wstring& filename ) const;
 	void Copy( const Surface& src );
@@ -134,15 +130,18 @@ private:
 		const unsigned int pixelAlignment = byteAlignment / sizeof( Color );
 		return width + ( pixelAlignment - width % pixelAlignment ) % pixelAlignment;
 	}
-	Surface( unsigned int width,unsigned int height,unsigned int pitch,std::unique_ptr<Color[]> pBufferParam )
+	Surface( unsigned int width,unsigned int height,unsigned int pitch, Color* pBufferParam )
 		:
 		width( width ),
 		height( height ),
 		pBuffer( std::move( pBufferParam ) ),
 		pitch( pitch )
-	{}
+	{
+		pBufferParam = nullptr;
+		delete[] pBufferParam;
+	}
 private:
-	std::unique_ptr<Color[]> pBuffer;
+	Color* pBuffer;
 	unsigned int width = 0u;
 	unsigned int height = 0u;
 	unsigned int pitch = 0u; // pitch is in PIXELS, not bytes!
