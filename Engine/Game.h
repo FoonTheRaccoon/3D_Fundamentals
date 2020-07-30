@@ -21,11 +21,11 @@
 #pragma once
 
 #include "Graphics.h"
+#include "FrameTimer.h"
 #include "PerspectiveScreenTransformer.h"
 #include "DiceModel.h"
 #include "Object.h"
 #include "Pipeline.h"
-
 
 class Game
 {
@@ -43,6 +43,7 @@ private:
 private:
 	MainWindow& wnd;
 	Graphics gfx;
+	FrameTimer ft;
 	/********************************/
 	/*  User Variables              */
 	Object die1;

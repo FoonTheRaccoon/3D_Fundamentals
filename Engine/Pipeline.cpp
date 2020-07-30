@@ -19,21 +19,11 @@ void Pipeline::Update()
 		//Set Rotation matrix.
 		const Mat3 rot = GetRot(obj->GetTheta());
 
-		//Apply rotation and set cull flags.
+		//Start of the pipeline, 
 		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
 			{
+				//Send off to transform with obj rotationand pos
 				VertexTransformer(rot, obj->GetPos(), tri);
-				TriangleAssembler(tri);
-			});
-
-		//Cull the tris (Duh)
-		Cull(triangles);
-
-		//Transform and draw the Tris
-		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
-			{
-				PerspecScreenTransform(tri);
-				TriangleRasterizer(tri);
 			});
 
 		//Clear Cache
@@ -51,18 +41,16 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 	tri.v0.pos += pos;
 	tri.v1.pos += pos;
 	tri.v2.pos += pos;
+
+	//Send To get culled
+	TriangleAssembler(tri);
 }
 
 void Pipeline::TriangleAssembler(Triangle& tri)
 {
 	//Apply back face culling flags
-	tri.cullFlag = (tri.v1.pos - tri.v0.pos).X(tri.v2.pos - tri.v0.pos) * tri.v0.pos >= 0.0f; //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
-}
-
-void Pipeline::Cull(std::vector<Triangle>& triangles)
-{
-	//Check for cull flags and erase
-	triangles.erase(std::remove_if(std::execution::par, triangles.begin(), triangles.end(), [](Triangle& tri) {return tri.cullFlag; }), triangles.end());
+	if (!((tri.v1.pos - tri.v0.pos).X(tri.v2.pos - tri.v0.pos) * tri.v0.pos >= 0.0f)) //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
+		PerspecScreenTransform(tri); //Send To get Transforms into screen space
 }
 
 void Pipeline::PerspecScreenTransform(Triangle& tri)
@@ -71,8 +59,10 @@ void Pipeline::PerspecScreenTransform(Triangle& tri)
 	pst.Transform(tri.v0);
 	pst.Transform(tri.v1);
 	pst.Transform(tri.v2);
-}
 
+	//Send To Draw The Triangle.
+	TriangleRasterizer(tri);
+}
 
 Mat3 Pipeline::GetRot(const Vec3& theta)
 {

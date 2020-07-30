@@ -31,7 +31,7 @@ Game::Game( MainWindow& wnd )
 	die2(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f))
 {
 	renderer.AddObject(&die1);
-	//renderer.AddObject(&die2);
+	renderer.AddObject(&die2);
 }
 
 void Game::Go()
@@ -44,7 +44,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	const float dt = 1.0f / 60.0f;
+	const float dt = ft.Mark();
 	die1.Update(dt);
 	die2.Update(-dt);
 
@@ -63,6 +63,10 @@ void Game::UpdateModel()
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
 		renderer.SetPixelShader(&PixelShader::ShowTriangles);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
+	{
+		renderer.DropObject(&die2);
 	}
 }
 

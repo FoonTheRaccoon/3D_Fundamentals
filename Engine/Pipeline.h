@@ -19,6 +19,13 @@ public:
 	{
 		objs.emplace_back(obj);
 	}
+	void DropObject(Object* obj)
+	{
+		auto removed_obj = std::find(objs.begin(), objs.end(), obj);
+
+		if (removed_obj != objs.end())
+			objs.erase(removed_obj);
+	}
 	//ShaderChanger
 	void SetPixelShader(Pixel_Shader* ps_in)
 	{
@@ -29,7 +36,6 @@ private:
 	//Main pipeline
 	void VertexTransformer(const Mat3& rot, const Vec3& pos, Triangle& tri);
 	void TriangleAssembler(Triangle& tri);
-	void Cull(std::vector<Triangle>& triangles);
 	void PerspecScreenTransform(Triangle& tri);
 	//Pipeline helper Functions
 	Mat3 GetRot(const Vec3& theta);

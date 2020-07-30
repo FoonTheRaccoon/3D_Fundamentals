@@ -142,6 +142,7 @@
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="DiceModel.h" />
+    <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="PixelShader.h" />
