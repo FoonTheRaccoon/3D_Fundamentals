@@ -27,7 +27,8 @@ struct Vertex
 	{
 		return{
 			pos.InterpolateTo(dest.pos,alpha),
-			texCor.InterpolateTo(dest.texCor,alpha)
+			texCor.InterpolateTo(dest.texCor,alpha),
+			color.InterpolateTo(dest.color, alpha)
 		};
 	}
 	Vertex& operator+=(const Vertex& rhs)

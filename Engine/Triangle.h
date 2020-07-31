@@ -4,6 +4,7 @@
 
 struct Triangle
 {
+	Triangle() = default;
 	Triangle(Vertex v0, Vertex v1, Vertex v2, Color color)
 		: v0(v0), v1(v1), v2(v2), color(color)
 	{}
@@ -26,5 +27,4 @@ struct Triangle
 	Vertex v1;
 	Vertex v2;
 	Color color;
-	bool cullFlag = false;
 };

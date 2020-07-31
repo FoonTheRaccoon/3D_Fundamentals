@@ -15,6 +15,7 @@ public:
 		const float zInv = 1.0f / v.pos.z;
 
 		v.texCor *= zInv;
+		v.color *= zInv;
 
 		v.pos.x = (v.pos.x * zInv + 1.0f) * xFactor;
 		v.pos.y = (-v.pos.y * zInv + 1.0f) * yFactor;
