@@ -2,10 +2,13 @@
 #include <cmath>
 #include <execution>
 
-void Pipeline::Update()
+void Pipeline::Update(float dt)
 {
 	//Set the ZBuffer for the frame
 	zbuffer.Clear();
+
+	//Increment Shader times
+	vs->IncrementTime(dt);
 
 	for (auto& obj : objs)
 	{
@@ -16,14 +19,17 @@ void Pipeline::Update()
 		static std::vector<Triangle> triangles;
 		triangles = obj->GetTriangles();
 
-		//Set Rotation matrix.
-		const Mat3 rot = GetRot(obj->GetTheta());
+		//Set Rotation matrix/pos
+		static Mat3 rot;
+		rot = GetRot(obj->GetTheta());
+		static Vec3 pos;
+		pos = obj->GetPos();
 
 		//Start of the pipeline, 
 		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
 			{
 				//Send off to transform with obj rotationand pos
-				VertexTransformer(rot, obj->GetPos(), tri);
+				VertexTransformer(rot, pos, tri);
 			});
 
 		//Clear Cache
@@ -41,6 +47,9 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 	tri.v0.pos += pos;
 	tri.v1.pos += pos;
 	tri.v2.pos += pos;
+
+	//Send off to the Vertex Shader
+	vs->Effect(tri);
 
 	//Send To get culled
 	TriangleAssembler(tri);
@@ -159,26 +168,29 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 	L_line += dL * (float(yStart) + 0.5f - v0.pos.y);
 	R_line += dR * (float(yStart) + 0.5f - v0.pos.y);
 
-	for (int iy = yStart; iy < yEnd; ++iy, L_line += dL, R_line += dR)
+	for (int y = yStart; y < yEnd; ++y, L_line += dL, R_line += dR)
 	{
 		//Set Tri x start/end
 		const int xStart = (int)ceilf(L_line.pos.x - 0.5f);
 		const int xEnd = (int)ceilf(R_line.pos.x - 0.5f);
 
+		//Set Texture iterartor
 		Vertex Tex_Line = L_line;
 
+		//Use pos x difference to get texture incrament.
 		const float tex_dx = (R_line.pos.x - L_line.pos.x);
 		const Vertex tex_incr = (R_line - L_line) / tex_dx;
 
+		//Do texture read prestep.
 		Tex_Line += tex_incr * (float(xStart) + 0.5f - L_line.pos.x);
 
-		for (int ix = xStart; ix < xEnd; ++ix, Tex_Line += tex_incr)
+		for (int x = xStart; x < xEnd; ++x, Tex_Line += tex_incr)
 		{
 			const float z = 1.0f / Tex_Line.pos.z;
-			if (zbuffer.TestAndSet(ix, iy, z))
+			if (zbuffer.TestAndSet(x, y, z))
 			{
 				const Vertex pixel = Tex_Line * z;
-				gfx.PutPixel(ix, iy, ps->Effect(tri, pixel));
+				gfx.PutPixel(x, y, ps->Effect(tri, pixel));
 			}
 		}
 	}

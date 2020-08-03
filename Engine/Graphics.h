@@ -66,6 +66,10 @@ public:
 	{
 		PutPixel( x,y,{ unsigned char( r ),unsigned char( g ),unsigned char( b ) } );
 	}
+	void PutPixel(const Vei2& pos, Color c)
+	{
+		PutPixel(pos.x, pos.y, c);
+	}
 	void PutPixel( int x,int y,Color c )
 	{
 		sysBuffer.PutPixel( x,y,c );

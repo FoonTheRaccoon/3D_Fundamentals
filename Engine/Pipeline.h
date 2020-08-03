@@ -4,6 +4,7 @@
 #include "PerspectiveScreenTransformer.h"
 #include "Triangle.h"
 #include "PixelShader.h"
+#include "VertexShader.h"
 #include "ZBuffer.h"
 
 class Pipeline
@@ -13,6 +14,7 @@ public:
 		: 
 		gfx(gfx), 
 		ps(&PixelShader::Default),
+		vs(&VertexShader::Default),
 		zbuffer(Graphics::ScreenWidth, Graphics::ScreenHeight)
 	{}
 	void AddObject(Object* obj)
@@ -31,7 +33,12 @@ public:
 	{
 		ps = ps_in;
 	}
-	void Update();
+	void SetVertexShader(Vertex_Shader* vs_in)
+	{
+		vs = vs_in;
+		vs->ResetTime();
+	}
+	void Update(float dt);
 private:
 	//Main pipeline
 	void VertexTransformer(const Mat3& rot, const Vec3& pos, Triangle& tri);
@@ -50,6 +57,7 @@ private:
 	Graphics& gfx;
 	PerspectiveScreenTransformer pst;
 	Pixel_Shader* ps;
+	Vertex_Shader* vs;
 	ZBuffer zbuffer;
 };
 

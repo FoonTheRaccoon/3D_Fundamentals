@@ -49,5 +49,6 @@ private:
 	Object die1;
 	Object die2;
 	Pipeline renderer;
+	float dt = 0.0f;
 	/********************************/
 };

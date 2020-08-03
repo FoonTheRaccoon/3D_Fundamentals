@@ -44,27 +44,44 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	const float dt = ft.Mark();
+	dt = ft.Mark();
+
 	die1.Update(dt);
 	die2.Update(-dt);
 
-	if (wnd.kbd.KeyIsPressed(VK_UP))
+	if (wnd.kbd.KeyIsPressed(VK_UP) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.SetPixelShader(&PixelShader::Default);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_DOWN))
+	if (wnd.kbd.KeyIsPressed(VK_DOWN) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.SetPixelShader(&PixelShader::InvertColors);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_LEFT))
+	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.SetPixelShader(&PixelShader::ShowVerticies);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.SetPixelShader(&PixelShader::ShowTriangles);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_UP))
+	{
+		renderer.SetVertexShader(&VertexShader::Default);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_DOWN))
+	{
+		renderer.SetVertexShader(&VertexShader::FloatObject);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_LEFT))
+	{
+		renderer.SetVertexShader(&VertexShader::PulseObject);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_RIGHT))
+	{
+		renderer.SetVertexShader(&VertexShader::XWobble);
+	}
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.DropObject(&die2);
 	}
@@ -72,5 +89,5 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {	
-	renderer.Update();
+	renderer.Update(dt);
 }
