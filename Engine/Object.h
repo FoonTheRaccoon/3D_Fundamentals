@@ -9,10 +9,10 @@
 class Object
 {
 public:
-	Object(Keyboard& kbd, Mouse& mouse, Model model)
-		: kbd(kbd), mouse(mouse), model(std::move(model))
+	Object(Model model)
+		: model(std::move(model))
 	{}
-	void Update(float dt);
+	void Update(MainWindow& wnd, float dt);
 	const std::vector<Triangle>& GetTriangles() const
 	{
 		return model.triangles;
@@ -34,7 +34,4 @@ protected:
 	Vec3 pos = { 0.0f ,0.0f ,2.0f };
 	Vec3 theta = { 0.0f ,0.0f ,0.0f };
 	Model model;
-	//Refs
-	Keyboard& kbd;
-	Mouse& mouse;
 };

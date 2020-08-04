@@ -81,4 +81,12 @@ namespace VertexShader
 	inline Float_Object		FloatObject;
 	inline Pulse_Object		PulseObject;
 	inline X_Wobble			XWobble;
+
+	inline std::vector<Vertex_Shader*> PtrList =
+	{
+		&Default,
+		&FloatObject,
+		&PulseObject,
+		&XWobble
+	};
 }

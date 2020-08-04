@@ -132,4 +132,16 @@ namespace PixelShader
 	inline Invert_Colors	InvertColors;
 	inline Static_Colors	StaticColors;
 	inline Ghost_Shock		GhostShock;
+
+	inline std::vector<Pixel_Shader*> PtrList =
+	{
+		&Default,
+		&ShowTriangles,
+		&ShowVerticies,
+		&SolidWhite,
+		&BlackAndWhite,
+		&InvertColors,
+		&StaticColors,
+		&GhostShock,
+	};
 }

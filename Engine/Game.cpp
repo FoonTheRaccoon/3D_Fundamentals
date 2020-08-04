@@ -27,8 +27,8 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	renderer(gfx),
-	die1(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f)),
-	die2(wnd.kbd, wnd.mouse, DiceModel::MakeDiceModel(1.0f))
+	die1(DiceModel::MakeDiceModel(1.0f)),
+	die2(DiceModel::MakeDiceModel(1.0f))
 {
 	renderer.AddObject(&die1);
 	renderer.AddObject(&die2);
@@ -46,41 +46,48 @@ void Game::UpdateModel()
 {
 	dt = ft.Mark();
 
-	die1.Update(dt);
-	die2.Update(-dt);
+	die1.Update(wnd, dt);
+	die2.Update(wnd, -dt);
 
-	if (wnd.kbd.KeyIsPressed(VK_UP) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
-	{
-		renderer.SetPixelShader(&PixelShader::Default);
-	}
-	if (wnd.kbd.KeyIsPressed(VK_DOWN) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
-	{
-		renderer.SetPixelShader(&PixelShader::GhostShock);
-	}
+	
 	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
-		renderer.SetPixelShader(&PixelShader::ShowVerticies);
+		--psList;
+		if (psList < 0)
+		{
+			psList = PixelShader::PtrList.size() - 1;
+		}
+		renderer.SetPixelShader(PixelShader::PtrList[psList]);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
+	else if (wnd.kbd.KeyIsPressed(VK_RIGHT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
-		renderer.SetPixelShader(&PixelShader::ShowTriangles);
+		++psList;
+		if (psList >= PixelShader::PtrList.size())
+		{
+			psList = 0;
+		}
+		renderer.SetPixelShader(PixelShader::PtrList[psList]);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_UP))
-	{
-		renderer.SetVertexShader(&VertexShader::Default);
-	}
-	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_DOWN))
-	{
-		renderer.SetVertexShader(&VertexShader::FloatObject);
-	}
+	
 	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_LEFT))
 	{
-		renderer.SetVertexShader(&VertexShader::PulseObject);
+		--vsList;
+		if (vsList < 0)
+		{
+			vsList = VertexShader::PtrList.size() - 1;
+		}
+		renderer.SetVertexShader(VertexShader::PtrList[vsList]);
 	}
-	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_RIGHT))
+	else if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_RIGHT))
 	{
-		renderer.SetVertexShader(&VertexShader::XWobble);
+		++vsList;
+		if (vsList >= VertexShader::PtrList.size())
+		{
+			vsList = 0;
+		}
+		renderer.SetVertexShader(VertexShader::PtrList[vsList]);
 	}
+
 	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.DropObject(&die2);

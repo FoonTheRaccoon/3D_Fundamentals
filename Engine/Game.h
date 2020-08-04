@@ -50,5 +50,7 @@ private:
 	Object die2;
 	Pipeline renderer;
 	float dt = 0.0f;
+	int psList = 0;
+	int vsList = 0;
 	/********************************/
 };
