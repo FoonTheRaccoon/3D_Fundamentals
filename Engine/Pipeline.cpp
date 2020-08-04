@@ -8,6 +8,7 @@ void Pipeline::Update(float dt)
 	zbuffer.Clear();
 
 	//Increment Shader times
+	ps->IncrementTime(dt);
 	vs->IncrementTime(dt);
 
 	for (auto& obj : objs)
@@ -36,6 +37,15 @@ void Pipeline::Update(float dt)
 		triangles.clear();
 	}
 	
+}
+
+Mat3 Pipeline::GetRot(const Vec3& theta)
+{
+	//Set Rot
+	return Mat3(
+		Mat3::RotationX(theta.x) *
+		Mat3::RotationY(theta.y) *
+		Mat3::RotationZ(theta.z));
 }
 
 void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
@@ -71,15 +81,6 @@ void Pipeline::PerspecScreenTransform(Triangle& tri)
 
 	//Send To Draw The Triangle.
 	TriangleRasterizer(tri);
-}
-
-Mat3 Pipeline::GetRot(const Vec3& theta)
-{
-	//Set Rot
-	return Mat3(
-		Mat3::RotationX(theta.x) *
-		Mat3::RotationY(theta.y) *
-		Mat3::RotationZ(theta.z));
 }
 
 void Pipeline::TriangleRasterizer(const Triangle& tri)

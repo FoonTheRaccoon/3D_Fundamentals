@@ -24,7 +24,28 @@ public:
 	{
 		texture = tex_in;
 	}
+	void IncrementTime(float dt)
+	{
+		if (time + dt < std::numeric_limits<float>::max())
+		{
+			time += dt;
+			sintime = sin(time);
+		}
+		else
+		{
+			time = 0.0f;
+			sintime = sin(time);
+		}
+	}
+	void ResetTime()
+	{
+		time = 0.0f;
+		sintime = 0.0f;
+	}
+protected:
 	Surface* texture = nullptr;
+	float time = 0.0f;
+	float sintime = 0.0f;
 };
 
 class Show_Triangles : public Pixel_Shader
@@ -87,6 +108,20 @@ public:
 	}
 };
 
+class Ghost_Shock : public Pixel_Shader
+{
+public:
+	Color Effect(const Triangle& tri, const Vertex& pixel) override
+	{
+		const Color c = BasePixel(pixel);
+		const int r = int(c.GetR() * sintime);
+		const int g = int(c.GetG() * sintime);
+		const int b = int(c.GetB() * sintime);
+		return Colors::MakeRGB(r, g, b);
+	}
+};
+
+
 namespace PixelShader
 {
 	inline Pixel_Shader		Default;
@@ -96,4 +131,5 @@ namespace PixelShader
 	inline Black_White		BlackAndWhite;
 	inline Invert_Colors	InvertColors;
 	inline Static_Colors	StaticColors;
+	inline Ghost_Shock		GhostShock;
 }

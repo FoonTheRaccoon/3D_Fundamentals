@@ -32,6 +32,7 @@ public:
 	void SetPixelShader(Pixel_Shader* ps_in)
 	{
 		ps = ps_in;
+		ps->ResetTime();
 	}
 	void SetVertexShader(Vertex_Shader* vs_in)
 	{
@@ -40,12 +41,12 @@ public:
 	}
 	void Update(float dt);
 private:
+	//Pipeline helper Functions
+	Mat3 GetRot(const Vec3& theta);
 	//Main pipeline
 	void VertexTransformer(const Mat3& rot, const Vec3& pos, Triangle& tri);
 	void TriangleAssembler(Triangle& tri);
 	void PerspecScreenTransform(Triangle& tri);
-	//Pipeline helper Functions
-	Mat3 GetRot(const Vec3& theta);
 	//Triangle Rasterizer Functions
 	void TriangleRasterizer(const Triangle& tri);
 	void DrawFlatTopTriangle(const Triangle& tri, const Vertex& v0, const Vertex& v1, const Vertex& v2);

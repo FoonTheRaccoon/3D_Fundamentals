@@ -55,7 +55,7 @@ void Game::UpdateModel()
 	}
 	if (wnd.kbd.KeyIsPressed(VK_DOWN) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
-		renderer.SetPixelShader(&PixelShader::InvertColors);
+		renderer.SetPixelShader(&PixelShader::GhostShock);
 	}
 	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
