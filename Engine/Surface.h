@@ -102,6 +102,7 @@ public:
 		assert( x < width );
 		assert( y < height );
 		return pBuffer[y * pitch + x];
+		
 	}
 	unsigned int GetWidth() const
 	{
@@ -120,7 +121,7 @@ public:
 	void Copy( const Surface& src );
 	static Surface DefaultSurface()
 	{
-		return Surface(0u,0u,0u);
+		return FromFile(L"Images\\blank_texture.png");
 	}
 private:
 	// calculate pixel pitch required for given byte aligment (must be multiple of 4 bytes)

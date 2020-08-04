@@ -20,14 +20,13 @@
 ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Mat3.h"
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
 	renderer(gfx),
-	die1(DiceModel::MakeDiceModel(1.0f)),
+	die1(UnskinnedCube::MakeUnskinedCube(1.0f)),
 	die2(DiceModel::MakeDiceModel(1.0f))
 {
 	renderer.AddObject(&die1);
@@ -88,7 +87,7 @@ void Game::UpdateModel()
 		renderer.SetVertexShader(VertexShader::PtrList[vsList]);
 	}
 
-	if (wnd.kbd.KeyIsPressed(VK_SHIFT) && wnd.kbd.KeyIsPressed(VK_SHIFT))
+	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
 		renderer.DropObject(&die2);
 	}

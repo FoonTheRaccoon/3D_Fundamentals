@@ -250,6 +250,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Chili.ico" />
+    <Image Include="Images\blank_texture.png" />
     <Image Include="Images\dice_skin.png" />
     <Image Include="Images\dice_unwrap.png" />
   </ItemGroup>

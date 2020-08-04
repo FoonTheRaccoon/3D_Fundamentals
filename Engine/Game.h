@@ -24,6 +24,7 @@
 #include "FrameTimer.h"
 #include "PerspectiveScreenTransformer.h"
 #include "DiceModel.h"
+#include "UnskinnedCube.h"
 #include "Object.h"
 #include "Pipeline.h"
 

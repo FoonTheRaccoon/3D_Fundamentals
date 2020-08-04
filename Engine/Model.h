@@ -6,7 +6,7 @@
 class Model
 {
 public:
-	Model(std::vector<Vertex> verts, std::vector<size_t> tri_indicies_list, Surface texture)
+	Model(std::vector<Vertex> verts, std::vector<size_t> tri_indicies_list, Surface texture = Surface::DefaultSurface())
 		: 
 		verts(std::move(verts)),
 		tri_indicies_list(std::move(tri_indicies_list)),

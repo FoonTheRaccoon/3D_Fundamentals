@@ -51,12 +51,7 @@ Mat3 Pipeline::GetRot(const Vec3& theta)
 void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 {
 	//Apply Rot + Offset
-	tri.v0.pos *= rot;
-	tri.v1.pos *= rot;
-	tri.v2.pos *= rot;
-	tri.v0.pos += pos;
-	tri.v1.pos += pos;
-	tri.v2.pos += pos;
+	tri.TransformTriangle(rot, pos);
 
 	//Send off to the Vertex Shader
 	vs->Effect(tri);
@@ -68,7 +63,7 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 void Pipeline::TriangleAssembler(Triangle& tri)
 {
 	//Apply back face culling flags
-	if (!((tri.v1.pos - tri.v0.pos).X(tri.v2.pos - tri.v0.pos) * tri.v0.pos >= 0.0f)) //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
+	if (!(tri.faceNorm * tri.v0.pos >= 0.0f)) //Cross two vectors in a tri to get perpendicular vec, then compare to veiwport space vector
 		PerspecScreenTransform(tri); //Send To get Transforms into screen space
 }
 
