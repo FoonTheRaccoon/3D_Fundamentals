@@ -41,8 +41,6 @@ public:
 	}
 	void Update(float dt);
 private:
-	//Pipeline helper Functions
-	Mat3 GetRot(const Vec3& theta);
 	//Main pipeline
 	void VertexTransformer(const Mat3& rot, const Vec3& pos, Triangle& tri);
 	void TriangleAssembler(Triangle& tri);

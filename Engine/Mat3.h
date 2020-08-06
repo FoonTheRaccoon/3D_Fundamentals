@@ -114,6 +114,13 @@ public:
 			(T)0.0,-sinTheta, cosTheta,
 		};
 	}
+	static _Mat3 GetRotation(_Vec3<T> theta)
+	{
+		return _Mat3(
+			_Mat3::RotationX(theta.x) *
+			_Mat3::RotationY(theta.y) *
+			_Mat3::RotationZ(theta.z));
+	}
 public:
 	// [ row ][ col ]
 	T elements[3][3];

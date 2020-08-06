@@ -20,10 +20,6 @@ struct UnskinnedCube
 		tmp_model.reserve(14);
 		const float side = size / 2.0f;
 
-		const auto ConvertTexCoord = [](float u, float v)
-		{
-			return Vec2{ (u + 1.0f) / 3.0f,v / 4.0f };
-		};
 		tmp_model.emplace_back(Vec3{ -side, -side, -side });	//0
 		tmp_model.emplace_back(Vec3{ side, -side, -side });		//1
 		tmp_model.emplace_back(Vec3{ -side, side, -side });		//2

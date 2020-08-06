@@ -2,6 +2,7 @@
 #include "Colors.h"
 #include "Surface.h"
 #include "Vertex.h"
+#include "Light.h"
 #include <cmath>
 
 class Pixel_Shader
@@ -18,7 +19,12 @@ public:
 		const float tex_height = float(texture->GetHeight());
 		const float tex_clamp_x = tex_width - 1.0f;
 		const float tex_clamp_y = tex_height - 1.0f;
-		return texture->GetPixel((int)std::fmod(pixel.texCor.x * tex_width, tex_clamp_x), (int)std::fmod(pixel.texCor.y * tex_height, tex_clamp_y));
+		const Color base = texture->GetPixel((int)std::fmod(pixel.texCor.x * tex_width, tex_clamp_x), (int)std::fmod(pixel.texCor.y * tex_height, tex_clamp_y));
+		return Color(Vec3(base) * lightBias);
+	}
+	void SetLightBias(const Triangle& tri)
+	{
+		lightBias = light->SetWorldLightShadingBias(tri);
 	}
 	void PointToTexture(Surface* tex_in)
 	{
@@ -44,6 +50,9 @@ public:
 	}
 protected:
 	Surface* texture = nullptr;
+	Light* light = &worldLight;
+	float lightBias = 1.0f;
+	Vec3 lightColor = { 1.0f, 1.0f, 1.0f };
 	float time = 0.0f;
 	float sintime = 0.0f;
 };
@@ -73,7 +82,7 @@ class Solid_White : public Pixel_Shader
 public:
 	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
-		return Colors::White;
+		return Color(Vec3(Colors::White) * lightBias);
 	}
 };
 
@@ -142,6 +151,6 @@ namespace PixelShader
 		&BlackAndWhite,
 		&InvertColors,
 		&StaticColors,
-		&GhostShock,
+		&GhostShock
 	};
 }

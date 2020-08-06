@@ -22,12 +22,12 @@ void Pipeline::Update(float dt)
 
 		//Set Rotation matrix/pos
 		static Mat3 rot;
-		rot = GetRot(obj->GetTheta());
+		rot = Mat3::GetRotation(obj->GetTheta());
 		static Vec3 pos;
 		pos = obj->GetPos();
 
 		//Start of the pipeline, 
-		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
+		std::for_each(triangles.begin(), triangles.end(), [&](Triangle& tri)
 			{
 				//Send off to transform with obj rotationand pos
 				VertexTransformer(rot, pos, tri);
@@ -39,15 +39,6 @@ void Pipeline::Update(float dt)
 	
 }
 
-Mat3 Pipeline::GetRot(const Vec3& theta)
-{
-	//Set Rot
-	return Mat3(
-		Mat3::RotationX(theta.x) *
-		Mat3::RotationY(theta.y) *
-		Mat3::RotationZ(theta.z));
-}
-
 void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 {
 	//Apply Rot + Offset
@@ -55,6 +46,9 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 
 	//Send off to the Vertex Shader
 	vs->Effect(tri);
+
+	//Use Final Tri transform to set world light bias
+	ps->SetLightBias(tri);
 
 	//Send To get culled
 	TriangleAssembler(tri);

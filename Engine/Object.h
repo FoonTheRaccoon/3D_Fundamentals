@@ -30,7 +30,6 @@ public:
 		return &model.texture;
 	}
 protected:
-	static constexpr float dTheta = PI;
 	Vec3 pos = { 0.0f ,0.0f ,2.0f };
 	Vec3 theta = { 0.0f ,0.0f ,0.0f };
 	Model model;

@@ -48,6 +48,7 @@ void Game::UpdateModel()
 	die1.Update(wnd, dt);
 	die2.Update(wnd, -dt);
 
+	worldLight.Update(wnd, dt);
 	
 	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
@@ -89,7 +90,7 @@ void Game::UpdateModel()
 
 	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
-		renderer.DropObject(&die2);
+		renderer.DropObject(&die1);
 	}
 }
 
