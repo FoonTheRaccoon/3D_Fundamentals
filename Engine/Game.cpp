@@ -92,6 +92,11 @@ void Game::UpdateModel()
 	{
 		renderer.DropObject(&die1);
 	}
+
+	if (wnd.kbd.KeyIsPressed('Z'))
+	{
+		renderer.FlipLightMode();
+	}
 }
 
 void Game::ComposeFrame()

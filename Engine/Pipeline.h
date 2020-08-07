@@ -28,6 +28,10 @@ public:
 		if (removed_obj != objs.end())
 			objs.erase(removed_obj);
 	}
+	void FlipLightMode()
+	{
+		ps->SwitchLightShadeMode();
+	}
 	//ShaderChanger
 	void SetPixelShader(Pixel_Shader* ps_in)
 	{

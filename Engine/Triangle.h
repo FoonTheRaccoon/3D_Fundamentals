@@ -49,4 +49,5 @@ public:
 	Vertex v2;
 	Vec3 faceNorm;
 	Color color;
+	float lightBias = 1.0f;
 };

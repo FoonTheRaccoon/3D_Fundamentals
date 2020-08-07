@@ -27,7 +27,7 @@ void Pipeline::Update(float dt)
 		pos = obj->GetPos();
 
 		//Start of the pipeline, 
-		std::for_each(triangles.begin(), triangles.end(), [&](Triangle& tri)
+		std::for_each(std::execution::par, triangles.begin(), triangles.end(), [&](Triangle& tri)
 			{
 				//Send off to transform with obj rotationand pos
 				VertexTransformer(rot, pos, tri);
@@ -47,7 +47,7 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 	//Send off to the Vertex Shader
 	vs->Effect(tri);
 
-	//Use Final Tri transform to set world light bias
+	//Use Final Tri transform to set tri face light bias
 	ps->SetLightBias(tri);
 
 	//Send To get culled

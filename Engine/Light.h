@@ -35,14 +35,14 @@ public:
 		}
 		direction.Normalize();
 	}
-	float SetWorldLightShadingBias(const Triangle& tri)
+	void SetWorldLightShadingBias(Triangle& tri)
 	{
 
 		float result = ((-tri.faceNorm) * direction) * intensity;
 
 		result = std::clamp(result, ambient, diffuse);
 
-		return result;
+		tri.lightBias = result;
 	}
 
 
