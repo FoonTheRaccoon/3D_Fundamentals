@@ -27,12 +27,8 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd ),
 	renderer(gfx),
 	monkey(ObjLoader::MakeModelFromObjFile(L"Models\\monkey.obj"))
-	//die1(UnskinnedCube::MakeUnskinedCube(1.0f)),
-	//die2(DiceModel::MakeDiceModel(1.0f))
 {
 	renderer.AddObject(&monkey);
-	//renderer.AddObject(&die1);
-	//renderer.AddObject(&die2);
 }
 
 void Game::Go()
@@ -48,8 +44,6 @@ void Game::UpdateModel()
 	dt = ft.Mark();
 
 	monkey.Update(wnd, dt);
-	//die1.Update(wnd, dt);
-	//die2.Update(wnd, -dt);
 
 	worldLight.Update(wnd, dt);
 	

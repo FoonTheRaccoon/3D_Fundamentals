@@ -141,7 +141,6 @@
     <ClInclude Include="ChiliMath.h" />
     <ClInclude Include="ChiliWin.h" />
     <ClInclude Include="Colors.h" />
-    <ClInclude Include="DiceModel.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Model.h" />
@@ -149,7 +148,6 @@
     <ClInclude Include="Pipeline.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="Triangle.h" />
-    <ClInclude Include="UnskinnedCube.h" />
     <ClInclude Include="DXErr.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GDIPlusManager.h" />

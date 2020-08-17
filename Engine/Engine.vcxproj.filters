@@ -36,12 +36,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UnskinnedCube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DiceModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VertexShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>

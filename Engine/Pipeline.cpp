@@ -33,7 +33,7 @@ void Pipeline::Update(float dt)
 				VertexTransformer(rot, pos, tri);
 			});
 
-		//Clear Cache
+		//Clear Cache 
 		triangles.clear();
 	}
 	
