@@ -46,8 +46,6 @@ private:
 	FrameTimer ft;
 	/********************************/
 	/*  User Variables              */
-	//Object die1;
-	//Object die2;
 	Object monkey;
 	Pipeline renderer;
 	float dt = 0.0f;

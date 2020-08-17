@@ -85,10 +85,10 @@ void Game::UpdateModel()
 		renderer.SetVertexShader(VertexShader::PtrList[vsList]);
 	}
 
-	//if (wnd.kbd.KeyIsPressed(VK_SHIFT))
-	//{
-	//	renderer.DropObject(&die1);
-	//}
+	if (wnd.kbd.KeyIsPressed('M'))
+	{
+		renderer.DropObject(&monkey);
+	}
 
 	if (wnd.kbd.KeyIsPressed('Z'))
 	{
