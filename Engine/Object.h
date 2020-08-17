@@ -2,8 +2,6 @@
 #include "MainWindow.h"
 #include "Graphics.h"
 #include "PerspectiveScreenTransformer.h"
-#include "IndexedLineList.h"
-#include "IndexedTriangleList.h"
 #include "Model.h"
 
 class Object

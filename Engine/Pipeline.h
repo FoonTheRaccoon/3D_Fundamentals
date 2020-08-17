@@ -32,6 +32,10 @@ public:
 	{
 		ps->SwitchLightShadeMode();
 	}
+	void FlipSmoothShading()
+	{
+		ps->SwitchSmoothShadeMode();
+	}
 	//ShaderChanger
 	void SetPixelShader(Pixel_Shader* ps_in)
 	{

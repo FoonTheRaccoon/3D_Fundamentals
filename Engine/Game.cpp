@@ -94,6 +94,11 @@ void Game::UpdateModel()
 	{
 		renderer.FlipLightMode();
 	}
+
+	if (wnd.kbd.KeyIsPressed('X'))
+	{
+		renderer.FlipSmoothShading();
+	}
 }
 
 void Game::ComposeFrame()

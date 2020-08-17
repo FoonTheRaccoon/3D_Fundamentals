@@ -81,12 +81,6 @@
     <ClInclude Include="Colors.h">
       <Filter>Header Files\Graphics Core</Filter>
     </ClInclude>
-    <ClInclude Include="IndexedLineList.h">
-      <Filter>Header Files\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexedTriangleList.h">
-      <Filter>Header Files\Data Types</Filter>
-    </ClInclude>
     <ClInclude Include="Mat2.h">
       <Filter>Header Files\Data Types</Filter>
     </ClInclude>

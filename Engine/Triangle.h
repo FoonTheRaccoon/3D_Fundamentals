@@ -1,12 +1,11 @@
 #pragma once
 #include "Vertex.h"
-#include "IndexedTriangleList.h"
 
 struct Triangle
 {
 	Triangle() = default;
-	Triangle(Vertex v0, Vertex v1, Vertex v2, Vec3 faceNorm, Color color)
-		: v0(v0), v1(v1), v2(v2), faceNorm(faceNorm), color(color)
+	Triangle(Vertex v0, Vertex v1, Vertex v2, Color color)
+		: v0(v0), v1(v1), v2(v2), faceNorm((v1.pos - v0.pos).X(v2.pos - v0.pos)), color(color)
 	{}
 	static Vec3 GetFaceNorm(Vertex v0, Vertex v1, Vertex v2)
 	{
@@ -23,6 +22,10 @@ struct Triangle
 		v1.pos += pos;
 		v2.pos += pos;
 
+		v0.norm *= rot;
+		v1.norm *= rot;
+		v2.norm *= rot;
+
 		faceNorm = (v1.pos - v0.pos).X(v2.pos - v0.pos);
 		faceNorm.Normalize();
 	}
@@ -32,5 +35,4 @@ public:
 	Vertex v2;
 	Vec3 faceNorm;
 	Color color;
-	float lightBias = 1.0f;
 };

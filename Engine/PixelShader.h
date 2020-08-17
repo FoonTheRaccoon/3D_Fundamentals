@@ -5,12 +5,13 @@
 #include "Light.h"
 #include <cmath>
 
+
 class Pixel_Shader
 {
 public:
 	virtual Color Effect (const Triangle& tri, const Vertex& pixel)
 	{
-		return LightShadePixel(tri, BasePixel(pixel));
+		return LightShadePixel(tri, pixel, BasePixel(pixel));
 	}
 	Color BasePixel(const Vertex& pixel)
 	{
@@ -21,21 +22,32 @@ public:
 		const float tex_clamp_y = tex_height - 1.0f;
 		return texture->GetPixel((int)std::fmod(pixel.texCor.x * tex_width, tex_clamp_x), (int)std::fmod(pixel.texCor.y * tex_height, tex_clamp_y));
 	}
-	Color LightShadePixel(const Triangle& tri, Color c)
+	Color LightShadePixel(const Triangle& tri, const Vertex& pixel, Color c)
 	{
+		
+		float lightBias;
+
 		if (lightShade)
 		{
-			return Color(Vec3(c) * tri.lightBias);
+			if (smoothshade)
+			{
+				lightBias = light->SetPixelLightShadingBias(pixel.norm);
+			}
+			else
+			{
+				lightBias = light->SetPixelLightShadingBias(tri.faceNorm);
+			}
+			return Color(Vec3(c) * lightBias);
 		}
 		return c;
-	}
-	void SetLightBias(Triangle& tri)
-	{
-		light->SetWorldLightShadingBias(tri);
 	}
 	void SwitchLightShadeMode()
 	{
 		lightShade = !lightShade;
+	}
+	void SwitchSmoothShadeMode()
+	{
+		smoothshade = !smoothshade;
 	}
 	void PointToTexture(Surface* tex_in)
 	{
@@ -61,6 +73,7 @@ public:
 	}
 protected:
 	bool lightShade = true;
+	bool smoothshade = true;
 	Surface* texture = nullptr;
 	Light* light = &worldLight;
 	Vec3 lightColor = { 1.0f, 1.0f, 1.0f };
@@ -73,7 +86,7 @@ class Show_Triangles : public Pixel_Shader
 public:
 	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
-		return LightShadePixel(tri, tri.color);
+		return LightShadePixel(tri, pixel, tri.color);
 	}
 };
 
@@ -82,7 +95,7 @@ class Show_Vertices : public Pixel_Shader
 public:
 	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
-		return LightShadePixel(tri, Color(pixel.color));
+		return LightShadePixel(tri, pixel, Color(pixel.color));
 	}
 };
 
@@ -93,7 +106,7 @@ class Solid_White : public Pixel_Shader
 public:
 	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
-		return LightShadePixel(tri, Colors::White);
+		return LightShadePixel(tri, pixel, Colors::White);
 	}
 };
 
@@ -105,7 +118,7 @@ public:
 		const Color c = BasePixel(pixel);
 		const unsigned int avg = (c.GetR() + c.GetG() + c.GetB()) / 3;
 
-		return LightShadePixel(tri, Colors::MakeRGB(avg, avg, avg));
+		return LightShadePixel(tri, pixel, Colors::MakeRGB(avg, avg, avg));
 	}
 };
 
@@ -115,7 +128,7 @@ public:
 	Color Effect(const Triangle& tri, const const Vertex& pixel) override
 	{
 		const Color c = BasePixel(pixel);
-		return LightShadePixel(tri, Colors::MakeRGB(255 - c.GetR(), 255 - c.GetG(), 255 - c.GetB()));
+		return LightShadePixel(tri, pixel, Colors::MakeRGB(255 - c.GetR(), 255 - c.GetG(), 255 - c.GetB()));
 	}
 };
 
@@ -124,7 +137,7 @@ class Static_Colors : public Pixel_Shader
 public:
 	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
-		return LightShadePixel(tri, Colors::MakeRGB(rand() % 255, rand() % 255, rand() % 255));
+		return LightShadePixel(tri, pixel, Colors::MakeRGB(rand() % 255, rand() % 255, rand() % 255));
 	}
 };
 
@@ -137,7 +150,7 @@ public:
 		const int r = int(c.GetR() * sintime);
 		const int g = int(c.GetG() * sintime);
 		const int b = int(c.GetB() * sintime);
-		return LightShadePixel(tri, Colors::MakeRGB(r, g, b));
+		return LightShadePixel(tri, pixel, Colors::MakeRGB(r, g, b));
 	}
 };
 

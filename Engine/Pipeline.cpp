@@ -47,9 +47,6 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 	//Send off to the Vertex Shader
 	vs->Effect(tri);
 
-	//Use Final Tri transform to set tri face light bias
-	ps->SetLightBias(tri);
-
 	//Send To get culled
 	TriangleAssembler(tri);
 }

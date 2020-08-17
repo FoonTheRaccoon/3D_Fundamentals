@@ -53,6 +53,7 @@ struct ObjLoader
 			return { triangles };
 		}
 	}
+private:
 	//Helper functions
 	static std::string GetFirstWordInLine(const std::string& line)
 	{
@@ -161,7 +162,7 @@ struct ObjLoader
 
 		Vec3 verts[3];
 		Vec2 texCors[3];
-		Vec3 faceNorm;
+		Vec3 vertNorm[3];
 
 		int slashIndex = 0;
 		int spaceIndex = 0;
@@ -192,17 +193,19 @@ struct ObjLoader
 			else
 			{
 				int index = std::stoi(numBuf) - 1;
-				faceNorm = verticiesNorm[index];
+				vertNorm[spaceIndex] = verticiesNorm[index];
 				numBuf.clear();
 				++spaceIndex;
 				slashIndex = 0;
 			}
 		}
+		int index = std::stoi(numBuf) - 1;
+		vertNorm[spaceIndex] = verticiesNorm[index];
 
-		Vertex v0 = { verts[0], texCors[0] };
-		Vertex v1 = { verts[1], texCors[1] };
-		Vertex v2 = { verts[2], texCors[2] };
+		Vertex v0 = { verts[0], texCors[0], vertNorm[0] };
+		Vertex v1 = { verts[1], texCors[1], vertNorm[1] };
+		Vertex v2 = { verts[2], texCors[2], vertNorm[2] };
 
-		triangles.emplace_back(v0, v1, v2, faceNorm, Colors::MakeRGB(rand() % 255, rand() % 255, rand() % 255));
+		triangles.emplace_back(v0, v1, v2, Colors::MakeRGB(rand() % 255, rand() % 255, rand() % 255));
 	}
 };
