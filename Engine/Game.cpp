@@ -26,11 +26,13 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	renderer(gfx),
-	die1(UnskinnedCube::MakeUnskinedCube(1.0f)),
-	die2(DiceModel::MakeDiceModel(1.0f))
+	monkey(ObjLoader::MakeModelFromObjFile(L"Models\\monkey.obj"))
+	//die1(UnskinnedCube::MakeUnskinedCube(1.0f)),
+	//die2(DiceModel::MakeDiceModel(1.0f))
 {
-	renderer.AddObject(&die1);
-	renderer.AddObject(&die2);
+	renderer.AddObject(&monkey);
+	//renderer.AddObject(&die1);
+	//renderer.AddObject(&die2);
 }
 
 void Game::Go()
@@ -45,8 +47,9 @@ void Game::UpdateModel()
 {
 	dt = ft.Mark();
 
-	die1.Update(wnd, dt);
-	die2.Update(wnd, -dt);
+	monkey.Update(wnd, dt);
+	//die1.Update(wnd, dt);
+	//die2.Update(wnd, -dt);
 
 	worldLight.Update(wnd, dt);
 	
@@ -88,10 +91,10 @@ void Game::UpdateModel()
 		renderer.SetVertexShader(VertexShader::PtrList[vsList]);
 	}
 
-	if (wnd.kbd.KeyIsPressed(VK_SHIFT))
-	{
-		renderer.DropObject(&die1);
-	}
+	//if (wnd.kbd.KeyIsPressed(VK_SHIFT))
+	//{
+	//	renderer.DropObject(&die1);
+	//}
 
 	if (wnd.kbd.KeyIsPressed('Z'))
 	{

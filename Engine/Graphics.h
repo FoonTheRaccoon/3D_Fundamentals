@@ -74,6 +74,10 @@ public:
 	{
 		sysBuffer.PutPixel( x,y,c );
 	}
+	bool IsOnScreen(int x, int y)
+	{
+		return x >= 0 && x < ScreenWidth && y >= 0 && y < ScreenHeight;
+	}
 	void SimpleSurfaceDraw(Vec2& pos, Surface& surface);
 	~Graphics();
 private:

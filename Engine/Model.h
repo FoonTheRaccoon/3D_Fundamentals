@@ -1,20 +1,20 @@
 #pragma once
-#include "Vertex.h"
 #include "Surface.h"
 #include "Triangle.h"
 
 class Model
 {
 public:
-	Model(std::vector<Vertex> verts, std::vector<size_t> tri_indicies_list, Surface texture = Surface::DefaultSurface())
+	Model(std::vector<Vertex>& verts, std::vector<size_t>& tri_indicies_list, Surface texture = Surface::DefaultSurface())
 		: 
-		verts(std::move(verts)),
-		tri_indicies_list(std::move(tri_indicies_list)),
-		triangles(Triangle::MakeTriangleList(this->verts, this-> tri_indicies_list)),
+		triangles(Triangle::MakeTriangleList(verts, tri_indicies_list)),
 		texture(std::move(texture))
 	{}
-	std::vector<Vertex> verts;
-	std::vector<size_t> tri_indicies_list;
+	Model(std::vector<Triangle>& triangles, Surface texture = Surface::DefaultSurface())
+		:
+		triangles(std::move(triangles)),
+		texture(std::move(texture))
+	{}
 	std::vector<Triangle> triangles;
 	Surface texture;
 };

@@ -135,6 +135,9 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObjLoader.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXErr.cpp">
@@ -187,12 +190,6 @@
   <ItemGroup>
     <Image Include="Chili.ico">
       <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Images\dice_unwrap.png">
-      <Filter>Images</Filter>
-    </Image>
-    <Image Include="Images\dice_skin.png">
-      <Filter>Images</Filter>
     </Image>
     <Image Include="Images\blank_texture.png">
       <Filter>Images</Filter>

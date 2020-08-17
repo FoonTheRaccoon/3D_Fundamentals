@@ -27,6 +27,7 @@
 #include "UnskinnedCube.h"
 #include "Object.h"
 #include "Pipeline.h"
+#include "ObjLoader.h"
 
 class Game
 {
@@ -47,8 +48,9 @@ private:
 	FrameTimer ft;
 	/********************************/
 	/*  User Variables              */
-	Object die1;
-	Object die2;
+	//Object die1;
+	//Object die2;
+	Object monkey;
 	Pipeline renderer;
 	float dt = 0.0f;
 	int psList = 0;
