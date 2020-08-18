@@ -26,6 +26,7 @@
 #include "Object.h"
 #include "Pipeline.h"
 #include "ObjLoader.h"
+#include "Light.h"
 
 class Game
 {
@@ -47,6 +48,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Object monkey;
+	Light light;
 	Pipeline renderer;
 	float dt = 0.0f;
 	int psList = 0;

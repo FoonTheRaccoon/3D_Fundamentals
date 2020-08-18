@@ -28,6 +28,17 @@ public:
 		if (removed_obj != objs.end())
 			objs.erase(removed_obj);
 	}
+	void AddLight(Light* light)
+	{
+		lights.emplace_back(light);
+	}
+	void DropLight(Light* light)
+	{
+		auto removed_light = std::find(lights.begin(), lights.end(), light);
+
+		if (removed_light != lights.end())
+			lights.erase(removed_light);
+	}
 	void FlipLightMode()
 	{
 		ps->SwitchLightShadeMode();
@@ -35,6 +46,10 @@ public:
 	void FlipSmoothShading()
 	{
 		ps->SwitchSmoothShadeMode();
+	}
+	void FlipRevealLights()
+	{
+		revealLights = !revealLights;
 	}
 	//ShaderChanger
 	void SetPixelShader(Pixel_Shader* ps_in)
@@ -61,6 +76,8 @@ private:
 	
 private:
 	std::vector<Object*> objs;
+	std::vector<Light*> lights;
+	bool revealLights = true;
 	Graphics& gfx;
 	PerspectiveScreenTransformer pst;
 	Pixel_Shader* ps;

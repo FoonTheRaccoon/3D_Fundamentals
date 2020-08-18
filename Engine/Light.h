@@ -3,54 +3,85 @@
 #include "Vec3.h"
 #include "Triangle.h"
 #include "MainWindow.h"
+#include "ObjLoader.h"
 
-class Light
+class Light 
 {
 public:
+	Light(Model model = ObjLoader::MakeModelFromObjFile(L"Models\\sphere.obj"))
+		: model(std::move(model))
+	{}
 	void Update(MainWindow& wnd, float dt)
 	{
-		if (wnd.kbd.KeyIsPressed('U'))
+		if (wnd.kbd.KeyIsPressed('L'))
 		{
-			direction.x = wrap_angle(direction.x + PI * dt);
+			pos.x = pos.x + speed * dt;
 		}
 		if (wnd.kbd.KeyIsPressed('I'))
 		{
-			direction.y = wrap_angle(direction.y + PI * dt);
+			pos.y = pos.y + speed * dt;
 		}
-		if (wnd.kbd.KeyIsPressed('O'))
+		if (wnd.kbd.KeyIsPressed('U'))
 		{
-			direction.z = wrap_angle(direction.z + PI * dt);
+			pos.z = pos.z + speed * dt;
 		}
 		if (wnd.kbd.KeyIsPressed('J'))
 		{
-			direction.x = wrap_angle(direction.x - PI * dt);
+			pos.x = pos.x - speed * dt;
 		}
 		if (wnd.kbd.KeyIsPressed('K'))
 		{
-			direction.y = wrap_angle(direction.y - PI * dt);
+			pos.y = pos.y - speed * dt;
 		}
-		if (wnd.kbd.KeyIsPressed('L'))
+		if (wnd.kbd.KeyIsPressed('O'))
 		{
-			direction.z = wrap_angle(direction.z - PI * dt);
+			pos.z = pos.z - speed * dt;
 		}
-		direction.Normalize();
 	}
-	float SetPixelLightShadingBias(const Vec3& norm)
+	float SetPixelLightShadingBias(const Vertex& vert)
 	{
+		const Vec3 lightNorm = pos.MakeNormVecFromPos(vert.pos);
 
-		float result = ((-norm.GetNormalized()) * direction) * intensity;
+		float result = ((-vert.norm.GetNormalized()) * lightNorm) * intensity;
 
 		result = std::clamp(result, ambient, diffuse);
 
 		return result;
 	}
+	float SetPixelLightShadingBias(const Triangle& tri)
+	{
+		const Vec3 faceAvg = (tri.v0.pos + tri.v1.pos + tri.v0.pos) / 3.0f;
+		const Vec3 lightNorm = pos.MakeNormVecFromPos(faceAvg);
 
 
+		float result = ((-tri.faceNorm) * lightNorm) * intensity;
+
+		result = std::clamp(result, ambient, diffuse);
+
+		return result;
+	}
+	const std::vector<Triangle>& GetTriangles() const
+	{
+		return model.triangles;
+	}
+	const Vec3& GetTheta() const
+	{
+		return theta;
+	}
+	const Vec3& GetPos() const
+	{
+		return pos;
+	}
+	Surface* GetTexturePtr()
+	{
+		return &model.texture;
+	}
+private:
 	float intensity = 1.0f;
 	float ambient = 0.05f;
 	float diffuse = 0.9f;
-	Vec3 direction = { 1.0f, 1.0f , 1.0f};
-	
+	float speed = 1.0f;
+	Vec3 pos = { 0.0f, 0.0f , 1.0f};
+	Vec3 theta = { 0.0f ,0.0f ,0.0f };
+	Model model;
 };
-
-inline Light worldLight;

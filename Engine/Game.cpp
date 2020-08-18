@@ -26,9 +26,11 @@ Game::Game( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd ),
 	renderer(gfx),
+	light(ObjLoader::MakeModelFromObjFile(L"Models\\sphere.obj")),
 	monkey(ObjLoader::MakeModelFromObjFile(L"Models\\monkey.obj"))
 {
 	renderer.AddObject(&monkey);
+	renderer.AddLight(&light);
 }
 
 void Game::Go()
@@ -45,7 +47,7 @@ void Game::UpdateModel()
 
 	monkey.Update(wnd, dt);
 
-	worldLight.Update(wnd, dt);
+	light.Update(wnd, dt);
 	
 	if (wnd.kbd.KeyIsPressed(VK_LEFT) && !wnd.kbd.KeyIsPressed(VK_SHIFT))
 	{
@@ -98,6 +100,11 @@ void Game::UpdateModel()
 	if (wnd.kbd.KeyIsPressed('X'))
 	{
 		renderer.FlipSmoothShading();
+	}
+
+	if (wnd.kbd.KeyIsPressed('C'))
+	{
+		renderer.FlipRevealLights();
 	}
 }
 

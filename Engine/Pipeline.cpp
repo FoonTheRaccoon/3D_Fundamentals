@@ -7,9 +7,42 @@ void Pipeline::Update(float dt)
 	//Set the ZBuffer for the frame
 	zbuffer.Clear();
 
+	//Point to light list for drawing
+	ps->PointToLightList(&lights);
+
 	//Increment Shader times
 	ps->IncrementTime(dt);
 	vs->IncrementTime(dt);
+
+	if (revealLights)
+	{
+		for (auto& light : lights)
+		{
+			//Point Pixel/Vertex Shaders to relevent object data.
+			ps->PointToTexture(light->GetTexturePtr());
+
+			//Init Tri list.
+			static std::vector<Triangle> lightTri;
+			lightTri = light->GetTriangles();
+
+			//Set Rotation matrix/pos
+			static Mat3 lightrot;
+			lightrot = Mat3::GetRotation(light->GetTheta());
+			static Vec3 lightpos;
+			lightpos = light->GetPos();
+
+
+			//Start of the pipeline, 
+			std::for_each(std::execution::par, lightTri.begin(), lightTri.end(), [&](Triangle& tri)
+				{
+					//Send off to transform with obj rotationand pos
+					VertexTransformer(lightrot, lightpos, tri);
+				});
+
+			//Clear Cache 
+			lightTri.clear();
+		}
+	}
 
 	for (auto& obj : objs)
 	{
@@ -161,7 +194,7 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 		const int xStart = (int)ceilf(L_line.pos.x - 0.5f);
 		const int xEnd = (int)ceilf(R_line.pos.x - 0.5f);
 
-		//Set Texture iterartor
+		//Set Texture iterator starting point
 		Vertex Tex_Line = L_line;
 
 		//Use pos x difference to get texture incrament.

@@ -29,13 +29,16 @@ public:
 
 		if (lightShade)
 		{
-			if (smoothshade)
+			for (auto& light : *lightList)
 			{
-				lightBias = light->SetPixelLightShadingBias(pixel.norm);
-			}
-			else
-			{
-				lightBias = light->SetPixelLightShadingBias(tri.faceNorm);
+				if (smoothshade)
+				{
+					lightBias = std::max(light->SetPixelLightShadingBias(pixel), lightBias);
+				}
+				else
+				{
+					lightBias = std::max(light->SetPixelLightShadingBias(tri), lightBias);
+				}
 			}
 			return Color(Vec3(c) * lightBias);
 		}
@@ -52,6 +55,10 @@ public:
 	void PointToTexture(Surface* tex_in)
 	{
 		texture = tex_in;
+	}
+	void PointToLightList(std::vector<Light*>* lightList_in)
+	{
+		lightList = lightList_in;
 	}
 	void IncrementTime(float dt)
 	{
@@ -75,7 +82,7 @@ protected:
 	bool lightShade = true;
 	bool smoothshade = true;
 	Surface* texture = nullptr;
-	Light* light = &worldLight;
+	std::vector<Light*>* lightList = nullptr;
 	Vec3 lightColor = { 1.0f, 1.0f, 1.0f };
 	float time = 0.0f;
 	float sintime = 0.0f;
@@ -125,7 +132,7 @@ public:
 class Invert_Colors : public Pixel_Shader
 {
 public:
-	Color Effect(const Triangle& tri, const const Vertex& pixel) override
+	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
 		const Color c = BasePixel(pixel);
 		return LightShadePixel(tri, pixel, Colors::MakeRGB(255 - c.GetR(), 255 - c.GetG(), 255 - c.GetB()));
