@@ -40,9 +40,17 @@ public:
 	}
 	float SetPixelLightShadingBias(const Vertex& vert)
 	{
-		const Vec3 lightNorm = pos.MakeNormVecFromPos(vert.pos);
+		// vertex to light data
+		const Vec3 v_to_l = pos - vert.worldPos;
+		const float dist = v_to_l.Len();
+		const Vec3 dir = v_to_l / dist;
+		// calculate attenuation
+		const float attenuation = 1.0f /
+			(constant_attenuation + linear_attenuation * dist * quadradic_attenuation * sq(dist));
+		// calculate intensity based on angle of incidence and attenuation
+		const float d = diffuse * attenuation;
 
-		float result = ((-vert.norm.GetNormalized()) * lightNorm) * intensity;
+		float result = (vert.norm.GetNormalized() * dir) * intensity * d;
 
 		result = std::clamp(result, ambient, diffuse);
 
@@ -50,11 +58,17 @@ public:
 	}
 	float SetPixelLightShadingBias(const Triangle& tri)
 	{
-		const Vec3 faceAvg = (tri.v0.pos + tri.v1.pos + tri.v0.pos) / 3.0f;
-		const Vec3 lightNorm = pos.MakeNormVecFromPos(faceAvg);
+		// vertex to light data
+		const Vec3 v_to_l = pos - tri.triCenter;
+		const float dist = v_to_l.Len();
+		const Vec3 dir = v_to_l / dist;
+		// calculate attenuation
+		const float attenuation = 1.0f /
+			(constant_attenuation + linear_attenuation * dist * quadradic_attenuation * sq(dist));
+		// calculate intensity based on angle of incidence and attenuation
+		const float d = diffuse * attenuation;
 
-
-		float result = ((-tri.faceNorm) * lightNorm) * intensity;
+		float result = (tri.faceNorm * dir) * intensity * d;
 
 		result = std::clamp(result, ambient, diffuse);
 
@@ -63,10 +77,6 @@ public:
 	const std::vector<Triangle>& GetTriangles() const
 	{
 		return model.triangles;
-	}
-	const Vec3& GetTheta() const
-	{
-		return theta;
 	}
 	const Vec3& GetPos() const
 	{
@@ -81,7 +91,9 @@ private:
 	float ambient = 0.05f;
 	float diffuse = 0.9f;
 	float speed = 1.0f;
+	float linear_attenuation = 1.0f;
+	float quadradic_attenuation = 1.5f;
+	float constant_attenuation = 1.0f;
 	Vec3 pos = { 0.0f, 0.0f , 1.0f};
-	Vec3 theta = { 0.0f ,0.0f ,0.0f };
 	Model model;
 };

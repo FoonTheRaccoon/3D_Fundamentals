@@ -16,8 +16,14 @@ void Pipeline::Update(float dt)
 
 	if (revealLights)
 	{
+		//Set all lights to draw as white and save old ps ptr.
+		auto shader = ps;
+		ps = &PixelShader::SolidWhite;
+
 		for (auto& light : lights)
 		{
+			
+
 			//Point Pixel/Vertex Shaders to relevent object data.
 			ps->PointToTexture(light->GetTexturePtr());
 
@@ -27,12 +33,12 @@ void Pipeline::Update(float dt)
 
 			//Set Rotation matrix/pos
 			static Mat3 lightrot;
-			lightrot = Mat3::GetRotation(light->GetTheta());
+			lightrot = Mat3::Identity();
 			static Vec3 lightpos;
 			lightpos = light->GetPos();
 
 
-			//Start of the pipeline, 
+			//Start of the pipeline
 			std::for_each(std::execution::par, lightTri.begin(), lightTri.end(), [&](Triangle& tri)
 				{
 					//Send off to transform with obj rotationand pos
@@ -42,6 +48,8 @@ void Pipeline::Update(float dt)
 			//Clear Cache 
 			lightTri.clear();
 		}
+		//Set back to original ps ptr
+		ps = shader;
 	}
 
 	for (auto& obj : objs)
@@ -209,7 +217,7 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 			const float z = 1.0f / Tex_Line.pos.z;
 			if (zbuffer.TestAndSet(x, y, z))
 			{
-				const Vertex pixel = Tex_Line * z;
+				const Vertex pixel = Vertex::PixelReadyToDraw(Tex_Line, z);
 				gfx.PutPixel(x, y, ps->Effect(tri, pixel));
 			}
 		}

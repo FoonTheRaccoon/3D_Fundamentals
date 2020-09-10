@@ -113,7 +113,7 @@ class Solid_White : public Pixel_Shader
 public:
 	Color Effect(const Triangle& tri, const Vertex& pixel) override
 	{
-		return LightShadePixel(tri, pixel, Colors::White);
+		return Colors::White;
 	}
 };
 

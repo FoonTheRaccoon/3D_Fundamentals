@@ -134,11 +134,6 @@ public:
 	{
 		return *this + (dest - *this) * alpha;
 	}
-	_Vec2	MakeNormVecFromPos(const _Vec2& dest) const
-	{
-		const _Vec2 tmp = { x - dest.x, y - dest.y};
-		return tmp.GetNormalized();
-	}
 public:
 	T x = (T)0;
 	T y = (T)0;

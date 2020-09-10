@@ -51,7 +51,7 @@ private:
 	Light light;
 	Pipeline renderer;
 	float dt = 0.0f;
-	int psList = 0;
-	int vsList = 0;
+	size_t psList = 0;
+	size_t vsList = 0;
 	/********************************/
 };

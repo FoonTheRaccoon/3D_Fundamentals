@@ -22,11 +22,17 @@ struct Triangle
 		v1.pos += pos;
 		v2.pos += pos;
 
+		v0.worldPos = v0.pos;
+		v1.worldPos = v1.pos;
+		v2.worldPos = v2.pos;
+
 		v0.norm *= rot;
 		v1.norm *= rot;
 		v2.norm *= rot;
 
-		faceNorm = (v1.pos - v0.pos).X(v2.pos - v0.pos);
+		triCenter = (v0.pos + v1.pos + v2.pos) / 3;
+
+		faceNorm *= rot;
 		faceNorm.Normalize();
 	}
 public:
@@ -34,5 +40,6 @@ public:
 	Vertex v1;
 	Vertex v2;
 	Vec3 faceNorm;
+	Vec3 triCenter = {0.0f, 0.0f, 0.0f};
 	Color color;
 };

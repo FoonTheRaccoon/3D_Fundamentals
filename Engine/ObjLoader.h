@@ -52,6 +52,7 @@ struct ObjLoader
 
 			return { triangles };
 		}
+		return MakeModelFromObjFile(L"Models\\sphere.obj");
 	}
 private:
 	//Helper functions

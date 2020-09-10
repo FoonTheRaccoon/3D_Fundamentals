@@ -5,11 +5,6 @@
 class PerspectiveScreenTransformer
 {
 public:
-	PerspectiveScreenTransformer()
-		:
-		xFactor( float( Graphics::ScreenWidth ) / 2.0f ),
-		yFactor( float( Graphics::ScreenHeight ) / 2.0f )
-	{}
 	Vertex& Transform(Vertex& v ) const
 	{
 		const float zInv = 1.0f / v.pos.z;
@@ -27,6 +22,6 @@ public:
 		return Transform(Vertex( v ) );
 	}
 private:
-	float xFactor;
-	float yFactor;
+	static constexpr float xFactor = float(Graphics::ScreenWidth) / 2.0f;
+	static constexpr float yFactor = float(Graphics::ScreenHeight) / 2.0f;
 };
