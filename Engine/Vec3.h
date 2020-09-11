@@ -48,7 +48,7 @@ public:
 	}
 	T		Len() const
 	{
-		return sqrt( LenSq() );
+		return (T)sqrt( LenSq() );
 	}
 	_Vec3&	Normalize()
 	{
@@ -134,7 +134,7 @@ public:
 	}
 	bool	operator==( const _Vec3 &rhs ) const
 	{
-		return x == rhs.x && y == rhs.y && rhs.z = z;
+		return x == rhs.x && y == rhs.y && rhs.z == z;
 	}
 	bool	operator!=( const _Vec3 &rhs ) const
 	{

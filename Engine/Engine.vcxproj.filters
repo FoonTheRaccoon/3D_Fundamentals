@@ -81,12 +81,6 @@
     <ClInclude Include="Colors.h">
       <Filter>Header Files\Graphics Core</Filter>
     </ClInclude>
-    <ClInclude Include="Mat2.h">
-      <Filter>Header Files\Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Mat3.h">
-      <Filter>Header Files\Data Types</Filter>
-    </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Header Files\Data Types</Filter>
     </ClInclude>
@@ -125,6 +119,12 @@
     </ClInclude>
     <ClInclude Include="ObjLoader.h">
       <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec4.h">
+      <Filter>Header Files\Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Mat.h">
+      <Filter>Header Files\Data Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -28,7 +28,7 @@ public:
 		return &model.texture;
 	}
 protected:
-	Vec3 pos = { 0.0f ,0.0f ,2.0f };
-	Vec3 theta = { 0.0f ,0.0f ,0.0f };
+	Vec3 pos = { 0.0f ,0.0f ,3.0f };
+	Vec3 theta = { 0.0f , 3.141f ,0.0f };
 	Model model;
 };

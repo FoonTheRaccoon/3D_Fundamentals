@@ -1,5 +1,5 @@
 #pragma once
-#include "Mat3.h"
+#include "Mat.h"
 #include "Vec3.h"
 #include "Triangle.h"
 #include "MainWindow.h"
