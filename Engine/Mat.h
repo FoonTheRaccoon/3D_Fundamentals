@@ -68,7 +68,7 @@ public:
 		}
 		return result;
 	}
-	static _Mat Identity()
+	static constexpr _Mat Identity()
 	{
 		if constexpr( S == 3 )
 		{
@@ -92,7 +92,7 @@ public:
 			static_assert(false,"Bad dimensionality");
 		}
 	}
-	static _Mat Scaling( T factor )
+	static constexpr _Mat Scaling( T factor )
 	{
 		if constexpr( S == 3 )
 		{
@@ -117,7 +117,7 @@ public:
 		}
 
 	}
-	static _Mat RotationZ( T theta )
+	static constexpr _Mat RotationZ( T theta )
 	{
 		const T sinTheta = sin( theta );
 		const T cosTheta = cos( theta );
@@ -143,7 +143,7 @@ public:
 			static_assert(false,"Bad dimensionality");
 		}
 	}
-	static _Mat RotationY( T theta )
+	static constexpr _Mat RotationY( T theta )
 	{
 		const T sinTheta = sin( theta );
 		const T cosTheta = cos( theta );
@@ -169,7 +169,7 @@ public:
 			static_assert(false,"Bad dimensionality");
 		}
 	}
-	static _Mat RotationX( T theta )
+	static constexpr _Mat RotationX( T theta )
 	{
 		const T sinTheta = sin( theta );
 		const T cosTheta = cos( theta );
@@ -195,7 +195,7 @@ public:
 			static_assert(false,"Bad dimensionality");
 		}
 	}
-	static _Mat GetRotation(_Vec3<T> theta)
+	static constexpr _Mat GetRotation(_Vec3<T> theta)
 	{
 		return _Mat(
 			_Mat::RotationX(theta.x) *
@@ -203,11 +203,11 @@ public:
 			_Mat::RotationZ(theta.z));
 	}
 	template<class V>
-	static _Mat Translation( const V& tl )
+	static constexpr _Mat Translation( const V& tl )
 	{
 		return Translation( tl.x,tl.y,tl.z );
 	}
-	static _Mat Translation( T x,T y,T z )
+	static constexpr _Mat Translation( T x,T y,T z )
 	{
 		if constexpr( S == 4 )
 		{
@@ -221,6 +221,22 @@ public:
 		else
 		{
 			static_assert(false,"Bad dimensionality");
+		}
+	}
+	static constexpr _Mat Projection(T w, T h, T n, T f)
+	{
+		if constexpr (S == 4)
+		{
+			return {
+				(T)2.0 * n / w,	(T)0.0,			(T)0.0,				(T)0.0,
+				(T)0.0,			(T)2.0 * n / h,	(T)0.0,				(T)0.0,
+				(T)0.0,			(T)0.0,			f / (f - n),		(T)1.0,
+				(T)0.0,			(T)0.0,			-n * f / (f - n),	(T)0.0
+			};
+		}
+		else
+		{
+			static_assert(false, "Bad dimensionality");
 		}
 	}
 public:
