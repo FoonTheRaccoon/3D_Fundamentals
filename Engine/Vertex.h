@@ -93,7 +93,7 @@ struct Vertex
 		pixel.color *= z;
 		return pixel;
 	}
-	Vec3 pos;
+	Vec4 pos;
 	Vec2 texCor;
 	Vec3 norm;
 	Vec3 color;

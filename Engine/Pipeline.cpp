@@ -102,9 +102,7 @@ void Pipeline::TriangleAssembler(Triangle& tri)
 void Pipeline::PerspecScreenTransform(Triangle& tri)
 {
 	//Transform to screen perpective.
-	pst.Transform(tri.v0);
-	pst.Transform(tri.v1);
-	pst.Transform(tri.v2);
+	pst.TransformTri(tri);
 
 	//Send To Draw The Triangle.
 	TriangleRasterizer(tri);
@@ -214,10 +212,9 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 
 		for (int x = xStart; x < xEnd; ++x, Tex_Line += tex_incr)
 		{
-			const float z = 1.0f / Tex_Line.pos.z;
-			if (zbuffer.TestAndSet(x, y, z))
+			if (zbuffer.TestAndSet(x, y, Tex_Line.pos.z))
 			{
-				const Vertex pixel = Vertex::PixelReadyToDraw(Tex_Line, z);
+				const Vertex pixel = Vertex::PixelReadyToDraw(Tex_Line, Tex_Line.pos.w);
 				gfx.PutPixel(x, y, ps->Effect(tri, pixel));
 			}
 		}
