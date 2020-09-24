@@ -20,7 +20,7 @@ public:
 		const float tex_height = float(texture->GetHeight());
 		const float tex_clamp_x = tex_width - 1.0f;
 		const float tex_clamp_y = tex_height - 1.0f;
-		return texture->GetPixel((int)std::fmod(pixel.texCor.x * tex_width, tex_clamp_x), (int)std::fmod(pixel.texCor.y * tex_height, tex_clamp_y));
+		return texture->GetPixel((int)std::clamp(pixel.texCor.x * tex_width, 0.0f, tex_clamp_x), (int)std::clamp(pixel.texCor.y * tex_height, 0.0f, tex_clamp_y));
 	}
 	Color LightShadePixel(const Triangle& tri, const Vertex& pixel, Color c)
 	{

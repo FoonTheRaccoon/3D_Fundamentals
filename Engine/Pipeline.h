@@ -66,6 +66,7 @@ public:
 private:
 	//Main pipeline
 	void VertexTransformer(const Mat3& rot, const Vec3& pos, Triangle& tri);
+	void TriangleClipper(Triangle& tri);
 	void TriangleAssembler(Triangle& tri);
 	void PerspecScreenTransform(Triangle& tri);
 	//Triangle Rasterizer Functions

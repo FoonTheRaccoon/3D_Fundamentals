@@ -89,7 +89,103 @@ void Pipeline::VertexTransformer(const Mat3& rot,const Vec3& pos, Triangle& tri)
 	vs->Effect(tri);
 
 	//Send To get culled
-	TriangleAssembler(tri);
+	TriangleClipper(tri);
+}
+
+void Pipeline::TriangleClipper(Triangle& tri)
+{
+	// cull tests
+	if (tri.v0.pos.x > tri.v0.pos.w &&
+		tri.v1.pos.x > tri.v1.pos.w &&
+		tri.v2.pos.x > tri.v2.pos.w)
+	{
+		return;
+	}
+	if (tri.v0.pos.x < -tri.v0.pos.w &&
+		tri.v1.pos.x < -tri.v1.pos.w &&
+		tri.v2.pos.x < -tri.v2.pos.w)
+	{
+		return;
+	}
+	if (tri.v0.pos.y > tri.v0.pos.w &&
+		tri.v1.pos.y > tri.v1.pos.w &&
+		tri.v2.pos.y > tri.v2.pos.w)
+	{
+		return;
+	}
+	if (tri.v0.pos.y < -tri.v0.pos.w &&
+		tri.v1.pos.y < -tri.v1.pos.w &&
+		tri.v2.pos.y < -tri.v2.pos.w)
+	{
+		return;
+	}
+	if (tri.v0.pos.z < 0.0f &&
+		tri.v1.pos.z < 0.0f &&
+		tri.v2.pos.z < 0.0f)
+	{
+		return;
+	}
+
+	// clipping routines
+	const auto Clip1 = [this](Vertex& v0, Vertex& v1, Vertex& v2)
+	{
+		// calculate alpha values for getting adjusted vertices
+		const float alphaA = (-v0.pos.z) / (v1.pos.z - v0.pos.z);
+		const float alphaB = (-v0.pos.z) / (v2.pos.z - v0.pos.z);
+		// interpolate to get v0a and v0b
+		const Vertex v0a = v0.InterpolateTo(v1, alphaA);
+		const Vertex v0b = v0.InterpolateTo(v2, alphaB);
+		// draw triangles
+		TriangleAssembler(Triangle{ v0a, v1, v2 , Color(v2.color)});
+		TriangleAssembler(Triangle{ v0b, v0a, v2, Color(v2.color)});
+	};
+	const auto Clip2 = [this](Vertex& v0, Vertex& v1, Vertex& v2)
+	{
+		// calculate alpha values for getting adjusted vertices
+		const float alpha0 = (-v0.pos.z) / (v2.pos.z - v0.pos.z);
+		const float alpha1 = (-v1.pos.z) / (v2.pos.z - v1.pos.z);
+		// interpolate to get v0a and v0b
+		v0 = v0.InterpolateTo(v2, alpha0);
+		v1 = v1.InterpolateTo(v2, alpha1);
+		// draw triangles
+		TriangleAssembler(Triangle{ v0, v1, v2, Color(v2.color)});
+	};
+	
+	// near clipping tests
+	if (tri.v0.pos.z < 0.0f)
+	{
+		if (tri.v1.pos.z < 0.0f)
+		{
+			Clip2(tri.v0, tri.v1, tri.v2);
+		}
+		else if (tri.v2.pos.z < 0.0f)
+		{
+			Clip2(tri.v0, tri.v2, tri.v1);
+		}
+		else
+		{
+			Clip1(tri.v0, tri.v1, tri.v2);
+		}
+	}
+	else if (tri.v1.pos.z < 0.0f)
+	{
+		if (tri.v2.pos.z < 0.0f)
+		{
+			Clip2(tri.v1, tri.v2, tri.v0);
+		}
+		else
+		{
+			Clip1(tri.v1, tri.v0, tri.v2);
+		}
+	}
+	else if (tri.v2.pos.z < 0.0f)
+	{
+		Clip1(tri.v2, tri.v0, tri.v1);
+	}
+	else // no near clipping necessary
+	{
+		TriangleAssembler(tri);
+	}
 }
 
 void Pipeline::TriangleAssembler(Triangle& tri)
@@ -187,18 +283,18 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 	Vertex L_line = v0;
 
 	//Set YBounds
-	const int yStart = (int)ceilf(v0.pos.y - 0.5f);
-	const int yEnd = (int)ceilf(v2.pos.y - 0.5f);
+	const int yStart = std::max((int)ceilf(v0.pos.y - 0.5f), 0);
+	const int yEnd = std::min((int)ceilf(v2.pos.y - 0.5f), (int)Graphics::ScreenHeight - 1);
 
 	//Do Prestep
 	L_line += dL * (float(yStart) + 0.5f - v0.pos.y);
 	R_line += dR * (float(yStart) + 0.5f - v0.pos.y);
 
-	for (int y = yStart; y < yEnd; ++y, L_line += dL, R_line += dR)
+	for (int y = yStart; y < yEnd; ++y, L_line += dL, R_line += dR) 
 	{
 		//Set Tri x start/end
-		const int xStart = (int)ceilf(L_line.pos.x - 0.5f);
-		const int xEnd = (int)ceilf(R_line.pos.x - 0.5f);
+		const int xStart = std::max((int)ceilf(L_line.pos.x - 0.5f), 0);
+		const int xEnd = std::min((int)ceilf(R_line.pos.x - 0.5f), (int)Graphics::ScreenWidth - 1);
 
 		//Set Texture iterator starting point
 		Vertex Tex_Line = L_line;
@@ -212,7 +308,7 @@ void Pipeline::DrawFlatTriangle(const Triangle& tri, const Vertex& v0, const Ver
 
 		for (int x = xStart; x < xEnd; ++x, Tex_Line += tex_incr)
 		{
-			if (zbuffer.TestAndSet(x, y, Tex_Line.pos.z))
+			if (zbuffer.TestAndSet(x, y, Tex_Line.pos.z) && (Tex_Line.worldPos.z > 0.01f))
 			{
 				const Vertex pixel = Vertex::PixelReadyToDraw(Tex_Line, Tex_Line.pos.w);
 				gfx.PutPixel(x, y, ps->Effect(tri, pixel));
